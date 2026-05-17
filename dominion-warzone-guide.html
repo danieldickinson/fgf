@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dominion Warzone Guide — Foundation: Galactic Frontier</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-deep: #050816;
+    --bg-panel: #0c1430;
+    --bg-card: #131c3d;
+    --accent: #4dd0ff;
+    --accent-2: #ff6ec7;
+    --accent-3: #ffd24d;
+    --attack: #ff5e62;
+    --defend: #4dd0ff;
+    --text: #e6ecff;
+    --text-dim: #9aa6c8;
+    --border: rgba(77, 208, 255, 0.18);
+    --good: #5be9b9;
+    --warn: #ffb74d;
+    --bad: #ff5e62;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: radial-gradient(ellipse at top, #0c1430 0%, #050816 60%) fixed;
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, white, transparent),
+      radial-gradient(1px 1px at 30% 70%, white, transparent),
+      radial-gradient(1px 1px at 50% 30%, white, transparent),
+      radial-gradient(1px 1px at 70% 80%, white, transparent),
+      radial-gradient(1px 1px at 85% 15%, white, transparent),
+      radial-gradient(1px 1px at 15% 90%, white, transparent),
+      radial-gradient(1px 1px at 65% 45%, white, transparent),
+      radial-gradient(1px 1px at 92% 60%, white, transparent),
+      radial-gradient(1px 1px at 40% 5%, white, transparent),
+      radial-gradient(1px 1px at 5% 50%, white, transparent);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  header.hero {
+    text-align: center;
+    padding: 48px 16px 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(77, 208, 255, 0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    background: linear-gradient(135deg, #4dd0ff 0%, #ff6ec7 50%, #ffd24d 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    background: var(--bg-panel);
+    padding: 6px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    position: sticky;
+    top: 16px;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+  }
+  nav.tabs button {
+    flex: 1;
+    min-width: 110px;
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: rgba(77, 208, 255, 0.06); }
+  nav.tabs button.active {
+    background: linear-gradient(135deg, rgba(77, 208, 255, 0.2), rgba(255, 110, 199, 0.15));
+    color: var(--text);
+    box-shadow: 0 0 0 1px var(--accent) inset;
+  }
+  section.tab-panel { display: none; animation: fadeIn 0.3s ease; }
+  section.tab-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  h2 {
+    font-size: 1.75rem;
+    margin: 28px 0 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .num {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #050816;
+    font-size: 1rem;
+    font-weight: 800;
+    align-items: center;
+    justify-content: center;
+  }
+  h3 { font-size: 1.25rem; margin: 20px 0 10px; color: var(--accent); }
+  h4 { font-size: 1rem; margin: 14px 0 6px; color: var(--accent-3); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { color: var(--text-dim); margin-bottom: 12px; }
+  p strong, li strong { color: var(--text); }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .pill {
+    background: rgba(77, 208, 255, 0.1);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  ul, ol { color: var(--text-dim); margin: 8px 0 12px 22px; }
+  li { margin-bottom: 6px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  th { color: var(--accent); font-weight: 600; background: rgba(77, 208, 255, 0.05); }
+  td { color: var(--text-dim); }
+  td:last-child, th:last-child { text-align: right; color: var(--accent-3); font-weight: 600; }
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 640px) { .role-grid { grid-template-columns: 1fr; } }
+  .role-card { padding: 20px; border-radius: 14px; border: 2px solid; }
+  .role-card.attacker { background: rgba(255, 94, 98, 0.06); border-color: var(--attack); }
+  .role-card.defender { background: rgba(77, 208, 255, 0.06); border-color: var(--defend); }
+  .role-card h3 { margin-top: 0; }
+  .role-card.attacker h3 { color: var(--attack); }
+  .role-card.defender h3 { color: var(--defend); }
+  .stage-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .stage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    background: linear-gradient(90deg, rgba(77, 208, 255, 0.05), transparent);
+    transition: background 0.2s;
+  }
+  .stage-header:hover { background: linear-gradient(90deg, rgba(77, 208, 255, 0.12), transparent); }
+  .stage-title { display: flex; align-items: center; gap: 14px; }
+  .stage-num {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #050816;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.1rem;
+  }
+  .stage-name { font-size: 1.1rem; font-weight: 600; color: var(--text); }
+  .stage-sub { font-size: 13px; color: var(--text-dim); }
+  .chevron { transition: transform 0.3s; color: var(--accent); font-size: 1.2rem; }
+  .stage-card.open .chevron { transform: rotate(180deg); }
+  .stage-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .stage-card.open .stage-body { max-height: 3000px; }
+  .stage-body-inner { padding: 0 20px 20px; }
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+    margin: 20px 0;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 11px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2), var(--accent-3));
+  }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -25px; top: 6px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--bg-deep), 0 0 12px var(--accent);
+  }
+  .timeline-time { color: var(--accent-3); font-weight: 600; font-size: 14px; }
+  .timeline-title { color: var(--text); font-weight: 600; margin: 2px 0 4px; }
+  .timeline-desc { color: var(--text-dim); font-size: 14px; }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: rgba(77, 208, 255, 0.06);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin: 14px 0;
+  }
+  .callout.warn { border-color: var(--warn); background: rgba(255, 183, 77, 0.06); }
+  .callout.bad { border-color: var(--bad); background: rgba(255, 94, 98, 0.06); }
+  .callout.good { border-color: var(--good); background: rgba(91, 233, 185, 0.06); }
+  .callout-label {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 700; margin-bottom: 4px;
+  }
+  .callout .callout-label { color: var(--accent); }
+  .callout.warn .callout-label { color: var(--warn); }
+  .callout.bad .callout-label { color: var(--bad); }
+  .callout.good .callout-label { color: var(--good); }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 16px 0; }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--accent-3); }
+  .stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+  .check-list { list-style: none; margin-left: 0; }
+  .check-list li {
+    padding: 8px 0 8px 30px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0; top: 8px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(91, 233, 185, 0.15);
+    color: var(--good);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 12px;
+  }
+  .x-list { list-style: none; margin-left: 0; }
+  .x-list li {
+    padding: 8px 0 8px 30px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .x-list li:last-child { border-bottom: none; }
+  .x-list li::before {
+    content: "✕";
+    position: absolute;
+    left: 0; top: 8px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(255, 94, 98, 0.15);
+    color: var(--bad);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 12px;
+  }
+  .save-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .save-item {
+    background: rgba(255, 210, 77, 0.06);
+    border: 1px solid rgba(255, 210, 77, 0.25);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--accent-3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .save-item::before { content: "🔒"; }
+  .player-table tr td:last-child { color: var(--text-dim); text-align: left; font-weight: 400; }
+  footer {
+    margin-top: 48px;
+    padding: 24px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  .toc-quick {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .toc-tile {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  .toc-tile:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(77, 208, 255, 0.15);
+  }
+  .toc-tile .icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .toc-tile .label { font-size: 14px; font-weight: 600; }
+  .toc-tile .desc { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .key-actions {
+    background: linear-gradient(135deg, rgba(77, 208, 255, 0.08), rgba(255, 110, 199, 0.05));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 6px 0;
+  }
+  .progress-bar > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="hero">
+  <span class="badge">Foundation: Galactic Frontier</span>
+  <h1>Dominion Warzone</h1>
+  <p class="subtitle">A complete, easy-to-follow guide to the 6-day server-vs-server event — scoring, strategy, battle day, and how to win.</p>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="active" data-tab="overview">Overview</button>
+  <button data-tab="stages">Daily Stages</button>
+  <button data-tab="battleday">Battle Day</button>
+  <button data-tab="strategy">Strategy</button>
+  <button data-tab="quick">Quick Reference</button>
+</nav>
+
+<!-- ===================== OVERVIEW TAB ===================== -->
+<section class="tab-panel active" id="overview">
+
+  <h2><span class="num">1</span> What Dominion Warzone Is</h2>
+  <div class="card">
+    <p><strong>Dominion Warzone</strong> is a 6-day, server-versus-server event. Two entire servers compete: first by racking up points during a 5-day preparation phase, then by fighting a final cross-server battle on Day 6.</p>
+    <p>The winning server from the preparation phase becomes the <strong style="color:var(--attack)">Attacker</strong>. The losing server becomes the <strong style="color:var(--defend)">Defender</strong>. The Attacker gets to invade the Defender's <em>Ascendancy Fortress</em> on Battle Day — and tries to capture it before the timer runs out.</p>
+    <div class="callout good">
+      <div class="callout-label">The core idea</div>
+      Score more preparation points than the enemy server → you attack on Saturday. Whoever controls the Ascendancy Fortress at the end wins.
+    </div>
+  </div>
+
+  <h2><span class="num">2</span> Event Structure</h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-time">Days 1–5 · Preparation Phase</div>
+      <div class="timeline-title">Complete daily themed quests</div>
+      <div class="timeline-desc">Earn individual points + server points. Server totals decide who attacks on Day 6.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-time">Saturday 00:05–24:00 UTC · Battle Stage</div>
+      <div class="timeline-title">Attackers can jump to the enemy server</div>
+      <div class="timeline-desc">Attackers use Expedition Jump Points to enter the defender's battlefield. 30-min cooldown per jump.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-time">Saturday 14:00–18:00 UTC · Main Contest Stage</div>
+      <div class="timeline-title">The decisive 4-hour window</div>
+      <div class="timeline-desc">Both sides contest Garrison Strongholds and the defender's Ascendancy Fortress. First to 100% occupation wins.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-time">After Battle Day · Recovery Period</div>
+      <div class="timeline-title">Claim returned losses</div>
+      <div class="timeline-desc">30% of eligible combat losses and shipbuilding speedups are returned. You have up to 3 days to claim.</div>
+    </div>
+  </div>
+
+  <h2><span class="num">3</span> Attacker vs Defender</h2>
+  <p>Both roles can win — but they play very differently.</p>
+  <div class="role-grid">
+    <div class="role-card attacker">
+      <h3>⚔️ Attacker</h3>
+      <p>Server that wins the preparation point race.</p>
+      <ul>
+        <li>Can jump into the defender's Ascendancy Fortress system</li>
+        <li>Uses Expedition Jump Points (Energy Core Lv 15+)</li>
+        <li>Wins by reaching <strong>100% occupation</strong> on the Ascendancy Fortress before 18:00 UTC</li>
+        <li>Gets the initiative — picks when and where to push</li>
+      </ul>
+    </div>
+    <div class="role-card defender">
+      <h3>🛡️ Defender</h3>
+      <p>Server that loses the preparation point race.</p>
+      <ul>
+        <li>Cannot enter the attacker's server</li>
+        <li>Must protect its own Ascendancy Fortress and Garrison Strongholds</li>
+        <li>Wins by simply <strong>preventing 100% occupation</strong> until the deadline</li>
+        <li>Home-field advantage — fights on familiar ground</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="num">4</span> The Three Key Buildings</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="color:var(--accent-2)">Ascendancy Fortress</h4>
+      <p>The central objective. The attacker must occupy the defender's fortress to 100% before the contest ends. Everything else exists to support or block this push.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--attack)">Offensive Garrison Stronghold</h4>
+      <p>Periodically attacks enemy-aligned fleets. Upgrading reduces cooldown and increases damage. On Saturday, attacker strongholds teleport to the defender's battlefield.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--defend)">Defensive Garrison Stronghold</h4>
+      <p>Boosts Defense for all fleets on the server when garrisoned. Upgrading increases server defense and garrison capacity. If captured by enemies, the defense bonus is temporarily disabled.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--accent-3)">Expedition Jump Point</h4>
+      <p>How attackers get into the enemy server. Tap "Enter Battlefield" to jump, "Withdraw" to return. Every jump triggers a 30-minute cooldown — don't waste them.</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">Critical rule</div>
+    The <strong>first fleet</strong> to garrison a key building sets its maximum rally capacity. Don't let random low-power players enter major buildings first — assign your strongest rally leaders.
+  </div>
+
+</section>
+
+<!-- ===================== STAGES TAB ===================== -->
+<section class="tab-panel" id="stages">
+
+  <h2><span class="num">📅</span> Daily Preparation Stages</h2>
+  <p>Each day of the preparation phase unlocks a different scoring theme. Resources only score if you spend them <strong>while the matching stage is active</strong>. Click each stage to expand.</p>
+
+  <div class="callout bad">
+    <div class="callout-label">The #1 mistake</div>
+    Spending high-value resources <em>before</em> the matching stage opens. A Legendary Weapon Fragment is worth +4,000 points during Stage 2 — and 0 points the day before. Save everything until its stage is live.
+  </div>
+
+  <!-- STAGE 1 -->
+  <div class="stage-card open">
+    <div class="stage-header" onclick="toggleStage(this)">
+      <div class="stage-title">
+        <div class="stage-num">1</div>
+        <div>
+          <div class="stage-name">Development First</div>
+          <div class="stage-sub">Combat: Ascendancy Minions & Tribute Vessels</div>
+        </div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="stage-body"><div class="stage-body-inner">
+      <table>
+        <thead><tr><th>Action</th><th>Points</th></tr></thead>
+        <tbody>
+          <tr><td>Defeat 1 Lv. 11–20 Ascendancy Minion</td><td>+1,200</td></tr>
+          <tr><td>Defeat 1 Lv. 21–30 Ascendancy Minion</td><td>+1,400</td></tr>
+          <tr><td>Defeat 1 Lv. 31–40 Ascendancy Minion</td><td>+1,600</td></tr>
+          <tr><td>Defeat 1 Lv. 41–50 Ascendancy Minion</td><td>+1,800</td></tr>
+          <tr><td>Defeat 1 Lv. 51–60 Ascendancy Minion</td><td>+2,000</td></tr>
+          <tr><td>Rally & defeat Lv. 1–60 Tribute Vessels (reward)</td><td>+6,000</td></tr>
+          <tr><td>Rally & defeat the Sacred Tribute Vessel</td><td>+2,000</td></tr>
+        </tbody>
+      </table>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value">850K</div><div class="stat-label">Tier 1 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">970K</div><div class="stat-label">Tier 2 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">1.15M</div><div class="stat-label">Tier 3 milestone</div></div>
+      </div>
+      <h4>Tips</h4>
+      <ul>
+        <li><strong>Coordinate Tribute Vessel rallies.</strong> The rally reward gives +6,000 per completion — easily the best action of the stage.</li>
+        <li>Hit the highest minion level you can defeat <em>efficiently</em>. Don't waste fleets trying to one-shot Lv. 60s if Lv. 40s give you faster throughput.</li>
+        <li>Sacred Tribute Vessel rallies are a focused team effort — schedule them.</li>
+      </ul>
+    </div></div>
+  </div>
+
+  <!-- STAGE 2 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggleStage(this)">
+      <div class="stage-title">
+        <div class="stage-num">2</div>
+        <div>
+          <div class="stage-name">Talent Recruitment</div>
+          <div class="stage-sub">Champions, weapons, commissions, Commerce Guild</div>
+        </div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="stage-body"><div class="stage-body-inner">
+      <table>
+        <thead><tr><th>Action</th><th>Points</th></tr></thead>
+        <tbody>
+          <tr><td>Spend 1 Weapon Prism</td><td>+2,000</td></tr>
+          <tr><td>Consume 1 Champion Fragment (Legendary)</td><td>+2,000</td></tr>
+          <tr><td>Consume 1 Champion Fragment (Epic)</td><td>+100</td></tr>
+          <tr><td>Increase Power by 1 (Champions)</td><td>+1</td></tr>
+          <tr><td>Spend 1 Legendary Training Manual</td><td>+200</td></tr>
+          <tr><td>Spend 1 Venturous Memory</td><td>+1,200</td></tr>
+          <tr><td>Consume 1 Weapon Energy Core</td><td>+6</td></tr>
+          <tr><td>Consume 1 Epic Weapon Fragment</td><td>+800</td></tr>
+          <tr><td>Consume 1 Legendary Weapon Fragment</td><td>+4,000</td></tr>
+          <tr><td>Earn 1 Credit through packs</td><td>+4</td></tr>
+          <tr><td>Complete 1 Common commission</td><td>+2,000</td></tr>
+          <tr><td>Complete 1 Uncommon commission</td><td>+2,500</td></tr>
+          <tr><td>Complete 1 Rare commission</td><td>+2,750</td></tr>
+          <tr><td>Complete 1 Epic commission</td><td>+3,000</td></tr>
+          <tr><td>Complete 1 Legendary commission</td><td>+3,250</td></tr>
+          <tr><td>Complete 1 Commerce Guild Assist</td><td>+10</td></tr>
+          <tr><td>Donate to Commerce Guild</td><td>+25</td></tr>
+        </tbody>
+      </table>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value">45K</div><div class="stat-label">Tier 1 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">110K</div><div class="stat-label">Tier 2 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">230K</div><div class="stat-label">Tier 3 milestone</div></div>
+      </div>
+      <h4>Tips</h4>
+      <ul>
+        <li><strong>Legendary Weapon Fragments are gold</strong> — +4,000 each. Hoard them for this stage.</li>
+        <li>Commissions are reliable points for everyone, including F2P. Don't skip them.</li>
+        <li>Guild Assists and Donations are tiny per action, but every player can do them — they add up across the server.</li>
+      </ul>
+    </div></div>
+  </div>
+
+  <!-- STAGE 3 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggleStage(this)">
+      <div class="stage-title">
+        <div class="stage-num">3</div>
+        <div>
+          <div class="stage-name">Technology & Crew</div>
+          <div class="stage-sub">Tech speedups, Deep Space items, Ruins</div>
+        </div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="stage-body"><div class="stage-body-inner">
+      <table>
+        <thead><tr><th>Action</th><th>Points</th></tr></thead>
+        <tbody>
+          <tr><td>Every 1 minute of Technology Speedup</td><td>+16</td></tr>
+          <tr><td>Spend 1 Computational Component</td><td>+200</td></tr>
+          <tr><td>Spend 1 Deep Space Beacon</td><td>+400</td></tr>
+          <tr><td>Spend 1 Echo Module</td><td>+40</td></tr>
+          <tr><td>Spend 1 Echoes of Deep Space</td><td>+8,000</td></tr>
+          <tr><td>Earn 1 Credit through packs</td><td>+4</td></tr>
+          <tr><td>Excavate a Legendary Ruin once</td><td>+15,000</td></tr>
+          <tr><td>Successfully plunder a Ruin</td><td>+25,000</td></tr>
+        </tbody>
+      </table>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value">26K</div><div class="stat-label">Tier 1 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">71K</div><div class="stat-label">Tier 2 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">220K</div><div class="stat-label">Tier 3 milestone</div></div>
+      </div>
+      <h4>Tips</h4>
+      <ul>
+        <li><strong>Ruin plundering is enormous</strong> — +25,000 per successful plunder. Top players should focus here.</li>
+        <li>Legendary Ruin excavation (+15,000) is plannable — schedule them, don't excavate randomly.</li>
+        <li>Echoes of Deep Space at +8,000 each is one of the best resource-spend rates in the event.</li>
+        <li>Stockpile Technology Speedups before the event — they convert directly to points.</li>
+      </ul>
+    </div></div>
+  </div>
+
+  <!-- STAGE 4 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggleStage(this)">
+      <div class="stage-title">
+        <div class="stage-num">4</div>
+        <div>
+          <div class="stage-name">Ultimate Flagship</div>
+          <div class="stage-sub">Flagship progression + commissions</div>
+        </div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="stage-body"><div class="stage-body-inner">
+      <table>
+        <thead><tr><th>Action</th><th>Points</th></tr></thead>
+        <tbody>
+          <tr><td>Boost Power by 1 (Flagship)</td><td>+1</td></tr>
+          <tr><td>Consume 1 Flagship Blueprint</td><td>+2,000</td></tr>
+          <tr><td>Spend 1 Prismatic Core</td><td>+150</td></tr>
+          <tr><td>Earn 1 Credit through packs</td><td>+4</td></tr>
+          <tr><td>Complete 1 Common commission</td><td>+2,000</td></tr>
+          <tr><td>Complete 1 Uncommon commission</td><td>+2,500</td></tr>
+          <tr><td>Complete 1 Rare commission</td><td>+2,750</td></tr>
+          <tr><td>Complete 1 Epic commission</td><td>+3,000</td></tr>
+          <tr><td>Complete 1 Legendary commission</td><td>+3,250</td></tr>
+        </tbody>
+      </table>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value">27K</div><div class="stat-label">Tier 1 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">110K</div><div class="stat-label">Tier 2 milestone</div></div>
+        <div class="stat-card"><div class="stat-value">260K</div><div class="stat-label">Tier 3 milestone</div></div>
+      </div>
+      <h4>Tips</h4>
+      <ul>
+        <li><strong>Save Flagship Blueprints and Prismatic Cores</strong> — never spend them outside this stage.</li>
+        <li>If you're close to a flagship upgrade, hold it for this day.</li>
+        <li>Commissions remain a strong fallback for players without flagship resources.</li>
+      </ul>
+    </div></div>
+  </div>
+
+  <!-- STAGE 5 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggleStage(this)">
+      <div class="stage-title">
+        <div class="stage-num">5</div>
+        <div>
+          <div class="stage-name">Stage 5 — Pending Confirmation</div>
+          <div class="stage-sub">Objectives not yet captured</div>
+        </div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="stage-body"><div class="stage-body-inner">
+      <div class="callout warn">
+        <div class="callout-label">To confirm in-game</div>
+        Stage 5 exists but its specific objectives haven't been captured. When it opens on your server, check the in-game scoring panel for the exact actions and point values.
+      </div>
+      <p>Based on the event's pattern, Stage 5 is likely a closing push — possibly a combat/rally focused day, or a "catch-up" stage that rewards a mix of activities. Treat it as a wildcard: be ready to spend any remaining saved resources once the panel opens.</p>
+    </div></div>
+  </div>
+
+  <h2><span class="num">💰</span> Server Chest Thresholds</h2>
+  <div class="card">
+    <p>All five stages share the same server-wide reward thresholds. Hit these together as a server to unlock chests for every active player.</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">5.4M</div><div class="stat-label">Server tier 1</div></div>
+      <div class="stat-card"><div class="stat-value">10.74M</div><div class="stat-label">Server tier 2</div></div>
+      <div class="stat-card"><div class="stat-value">15.75M</div><div class="stat-label">Server tier 3</div></div>
+    </div>
+    <p style="margin-top:12px"><strong>Reminder:</strong> server points don't just unlock chests — they decide who attacks on Day 6. Even small contributions matter.</p>
+  </div>
+
+</section>
+
+<!-- ===================== BATTLE DAY TAB ===================== -->
+<section class="tab-panel" id="battleday">
+
+  <h2><span class="num">⚔️</span> Battle Day — Saturday</h2>
+  <p>Battle Day is a full 24 hours of access, but the actual decisive window is the 4-hour Main Contest. Everything else is positioning.</p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-time">00:05 UTC</div>
+      <div class="timeline-title">Battle Stage opens</div>
+      <div class="timeline-desc">Attackers can begin jumping to the defender's battlefield. Scout, don't rush.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-time">00:05 – 14:00 UTC</div>
+      <div class="timeline-title">Opening Stage — Scouting Phase</div>
+      <div class="timeline-desc">Use small groups to learn defender positions. Identify enemy rally leaders. Conserve jump cooldowns. Keep the main force fresh.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-time">14:00 – 18:00 UTC</div>
+      <div class="timeline-title">⭐ Main Contest — THE DECIDING WINDOW</div>
+      <div class="timeline-desc">Both sides can occupy Garrison Strongholds and the Ascendancy Fortress. This is when leadership earns its pay. Everyone fights here.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-time">18:00 UTC</div>
+      <div class="timeline-title">Battle decided</div>
+      <div class="timeline-desc">If attacker hit 100% Fortress occupation — Attacker wins. If not — Defender wins. Simple.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-time">24:00 UTC</div>
+      <div class="timeline-title">Battle Stage closes</div>
+      <div class="timeline-desc">Anyone still on the enemy server is forcibly recalled home.</div>
+    </div>
+  </div>
+
+  <h2><span class="num">🚀</span> Cross-Server Jump Rules</h2>
+  <div class="card">
+    <h4>Requirements</h4>
+    <ul>
+      <li>Player must be on the <strong>attacking server</strong></li>
+      <li>Player must have <strong>Energy Core Level 15+</strong></li>
+    </ul>
+    <h4>How it works</h4>
+    <ul>
+      <li>Tap <strong>Enter Battlefield</strong> from the event interface to jump to the defender's Ascendancy Fortress system</li>
+      <li>Tap <strong>Withdraw from Battlefield</strong> to return home</li>
+      <li><strong>Every jump = 30-minute cooldown.</strong> Don't burn it on scouting if you'll need it for the contest window</li>
+    </ul>
+    <h4>Restrictions</h4>
+    <ul>
+      <li>You can't use the defender's Star Gate to travel to other systems</li>
+      <li>Idle attacking fleets may auto-return home</li>
+      <li>Fleets inactive too long without Auto Rally may be temporarily hidden</li>
+      <li>At 24:00 UTC, all foreign players are forcibly recalled</li>
+    </ul>
+  </div>
+
+  <h2><span class="num">🎯</span> The Attacker Playbook</h2>
+  <div class="card">
+    <p>Your goal is <strong>not</strong> killing the most fleets. Your goal is reaching 100% occupation on the Ascendancy Fortress before 18:00 UTC.</p>
+    <h4>Opening Stage (00:05–14:00)</h4>
+    <ul>
+      <li>Send scouts, not armies. Identify defender garrisons and rally patterns.</li>
+      <li>Confirm safe routes from jump points to the Fortress.</li>
+      <li>Keep your strongest fleets fresh — do not burn them in the morning.</li>
+    </ul>
+    <h4>Main Contest (14:00–18:00)</h4>
+    <ul>
+      <li><strong>Centralize calls.</strong> One commander, one focus target at a time.</li>
+      <li>Take or neutralize key Garrison Strongholds first — they hammer your rallies if left alone.</li>
+      <li>Don't push the Fortress until the server can <em>hold</em> pressure on it.</li>
+      <li>Rotate damaged fleets out fast. Don't feed kills.</li>
+      <li>Watch <strong>occupation %</strong>, not the kill feed.</li>
+    </ul>
+  </div>
+
+  <h2><span class="num">🛡️</span> The Defender Playbook</h2>
+  <div class="card">
+    <p>Your goal is <strong>not</strong> winning every fight. It's simply preventing 100% occupation until 18:00 UTC. You win by surviving.</p>
+    <h4>Opening Stage (00:05–14:00)</h4>
+    <ul>
+      <li>Garrison your Defensive Strongholds <em>first</em>, with your strongest rally leaders.</li>
+      <li>Keep the Fortress's first-garrison slot for a high-power rally leader (sets the rally cap).</li>
+      <li>Monitor enemy scouts — note who's testing your defenses.</li>
+    </ul>
+    <h4>Main Contest (14:00–18:00)</h4>
+    <ul>
+      <li>Hold the Fortress. Everything else is secondary.</li>
+      <li>Counter-attack attacker garrisons — if you flip one, their defense buff drops.</li>
+      <li>Don't chase. Don't let attackers bait you out of the Fortress with side targets.</li>
+      <li>Rotate damaged fleets. Reinforce the Fortress constantly.</li>
+      <li>Trade fleets for time. Every minute survived is points off their occupation push.</li>
+    </ul>
+  </div>
+
+  <h2><span class="num">🏆</span> Rewards</h2>
+  <p>The Attacker reward panel shows stronger rewards than the Defender's, but both rewards are substantial. Sample captured values:</p>
+  <table>
+    <thead><tr><th>Reward Type</th><th style="text-align:left;color:var(--attack)">Attacker</th><th style="color:var(--defend)">Defender</th></tr></thead>
+    <tbody>
+      <tr><td>Currency / token 1</td><td style="text-align:left">300</td><td>280</td></tr>
+      <tr><td>Currency / token 2</td><td style="text-align:left">30</td><td>20</td></tr>
+      <tr><td>Resource bundle 1</td><td style="text-align:left">100K × 5</td><td>100K × 4</td></tr>
+      <tr><td>Resource bundle 2</td><td style="text-align:left">100K × 5</td><td>100K × 4</td></tr>
+      <tr><td>Resource bundle 3</td><td style="text-align:left">40K × 5</td><td>40K × 4</td></tr>
+    </tbody>
+  </table>
+  <p>Tap each reward icon in-game to see exact item names — they may vary slightly by patch.</p>
+
+  <h2><span class="num">♻️</span> Recovery Period</h2>
+  <div class="card">
+    <p>The system tracks combat losses from <strong>cross-server</strong> battles during Battle Day. After the battle ends:</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">30%</div><div class="stat-label">Losses returned</div></div>
+      <div class="stat-card"><div class="stat-value">3 days</div><div class="stat-label">Window to claim</div></div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-label">Don't forget</div>
+      Resources and shipbuilding speedups are returned, but you must <strong>claim them manually</strong> within the window. Losses are partially recovered — not free.
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================== STRATEGY TAB ===================== -->
+<section class="tab-panel" id="strategy">
+
+  <h2><span class="num">🧠</span> How to Win — Strategy Playbook</h2>
+  <p>Dominion Warzone rewards <strong>preparation, timing, and discipline</strong>. The strongest server doesn't always win — the most coordinated one does.</p>
+
+  <h2><span class="num">1</span> Before the Event — Stockpile</h2>
+  <div class="card">
+    <p><strong>Tell the server one week before:</strong> stop spending these resources. They convert directly to event points when their stage opens.</p>
+    <div class="save-list">
+      <div class="save-item">Champion Fragments</div>
+      <div class="save-item">Weapon Prisms</div>
+      <div class="save-item">Weapon Energy Cores</div>
+      <div class="save-item">Epic Weapon Fragments</div>
+      <div class="save-item">Legendary Weapon Fragments</div>
+      <div class="save-item">Legendary Training Manuals</div>
+      <div class="save-item">Venturous Memories</div>
+      <div class="save-item">Technology Speedups</div>
+      <div class="save-item">Computational Components</div>
+      <div class="save-item">Deep Space Beacons</div>
+      <div class="save-item">Echo Modules</div>
+      <div class="save-item">Echoes of Deep Space</div>
+      <div class="save-item">Flagship Blueprints</div>
+      <div class="save-item">Prismatic Cores</div>
+      <div class="save-item">Commission refreshes</div>
+    </div>
+    <div class="callout good">
+      <div class="callout-label">The Rule of Thumb</div>
+      <strong>Never spend when the event is closed. Only spend when the matching stage is active.</strong> This single rule wins the preparation phase.
+    </div>
+  </div>
+
+  <h2><span class="num">2</span> Player Segmentation — Right Player, Right Job</h2>
+  <p>Not everyone should do everything. Match players to where they create the most value.</p>
+  <table class="player-table">
+    <thead><tr><th>Player Type</th><th>Best Contribution</th></tr></thead>
+    <tbody>
+      <tr><td><strong>High-power</strong></td><td>Tribute rallies, Ruin plundering, high-level combat, Battle Day frontline</td></tr>
+      <tr><td><strong>Mid-power</strong></td><td>Minions, commissions, assists, donations, reinforcement, support rallies</td></tr>
+      <tr><td><strong>Low-power / F2P</strong></td><td>Daily milestones, guild assists, donations, commissions, battlefield support</td></tr>
+      <tr><td><strong>Spenders</strong></td><td>Time major resource spending to the correct daily theme — not before</td></tr>
+      <tr><td><strong>Officers</strong></td><td>Track server score, publish reminders, assign targets, coordinate roles</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="num">3</span> Six Strategic Priorities for Leadership</h2>
+
+  <div class="card">
+    <h4>① Control Spending Windows</h4>
+    <p>The single biggest mistake: players spending key resources before the correct stage. Publish daily reminders: "Today is Stage 2 — spend Champion Fragments and Weapon Fragments now. Hold tech and flagship items."</p>
+  </div>
+
+  <div class="card">
+    <h4>② Push Server Points, Not Just Individual Chests</h4>
+    <p>Individual milestones are good. But the <strong>server-wide score</strong> is what decides Attacker vs Defender. Even small players hitting their dailies adds millions of points across the server.</p>
+  </div>
+
+  <div class="card">
+    <h4>③ Identify High-Value Players Per Stage</h4>
+    <p>Combat players matter most on Stage 1. Heavy spenders matter most on Stage 2. Tech hoarders and ruin players carry Stage 3. Flagship-focused players carry Stage 4. Match calls to the day.</p>
+  </div>
+
+  <div class="card">
+    <h4>④ Build a Real Battle-Day Roster</h4>
+    <p>Track in advance — who can attend 14:00–18:00 UTC, who has Energy Core 15+, who leads rallies, who garrisons, who reinforces, who handles comms. "Enthusiasm" is not a plan.</p>
+  </div>
+
+  <div class="card">
+    <h4>⑤ Prevent Random First-Garrison Mistakes</h4>
+    <p>The <strong>first player</strong> to station a fleet in a key building sets its rally capacity. If a low-power player garrisons first, your whole rally is capped at their level. Assign first-garrison roles explicitly.</p>
+  </div>
+
+  <div class="card">
+    <h4>⑥ Use Titles Properly</h4>
+    <p><strong>Trader Prince</strong> and <strong>Military Counselor</strong> titles can change a Garrison Leader while the building isn't in combat. Plan title assignments before Battle Day so the right person can hot-swap garrison leadership.</p>
+  </div>
+
+  <h2><span class="num">✅</span> Officer Checklist</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Before the Event</h4>
+      <ul class="check-list">
+        <li>Publish a resource-saving notice</li>
+        <li>Assign a daily stage officer</li>
+        <li>Track high-value resources held by active players</li>
+        <li>Prepare point reminders for each stage</li>
+        <li>Identify Battle Day availability</li>
+        <li>List Energy Core Lv 15+ players</li>
+        <li>Choose rally leaders + backups</li>
+        <li>Assign Trader Prince / Military Counselor</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>During Days 1–5</h4>
+      <ul class="check-list">
+        <li>Post each day's active objectives</li>
+        <li>Remind players what NOT to spend yet</li>
+        <li>Track server score vs the opposing server</li>
+        <li>Push low-effort actions for everyone</li>
+        <li>Coordinate high-value actions from top players</li>
+        <li>Screenshot scores and rankings</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Before Battle Day</h4>
+      <ul class="check-list">
+        <li>Publish final schedule in UTC + local time</li>
+        <li>Confirm voice/chat command structure</li>
+        <li>Assign first-garrison players</li>
+        <li>Assign rally leaders</li>
+        <li>Assign reinforcement groups</li>
+        <li>Remind: don't waste jump cooldowns</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>During the Main Contest</h4>
+      <ul class="check-list">
+        <li>Keep calls short and clear</li>
+        <li>Focus one objective at a time</li>
+        <li>Watch occupation %, not kills</li>
+        <li>Rotate damaged fleets</li>
+        <li>Change Garrison Leader only when safe</li>
+        <li>Keep morale steady if the first push fails</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="num">🔑</span> Final Principle</h2>
+  <div class="key-actions">
+    <p style="font-size: 1.1rem; color: var(--text)">The winning server is not the one with the most powerful players. It's the one that:</p>
+    <ul style="margin-top:12px">
+      <li>Saves the right resources</li>
+      <li>Spends them on the right day</li>
+      <li>Coordinates its strongest players</li>
+      <li>Keeps its smaller players engaged</li>
+      <li>Controls key buildings properly</li>
+      <li>Shows up during the 14:00–18:00 UTC contest window</li>
+    </ul>
+    <p style="margin-top:12px; color: var(--accent-3); font-weight:600">Treat Dominion Warzone as a server operation, not an individual event.</p>
+  </div>
+
+</section>
+
+<!-- ===================== QUICK REFERENCE TAB ===================== -->
+<section class="tab-panel" id="quick">
+
+  <h2><span class="num">⚡</span> Player Quick Guide</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="color: var(--good)">During Preparation (Days 1–5)</h4>
+      <ul class="check-list">
+        <li>Check the active daily theme before spending anything</li>
+        <li>Save resources for their matching stage</li>
+        <li>Complete your individual milestones</li>
+        <li>Help the server score — every point counts</li>
+        <li>Follow officer calls for rallies & high-value targets</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="color: var(--accent-2)">During Battle Day (Saturday)</h4>
+      <ul class="check-list">
+        <li>Don't jump without orders</li>
+        <li>Remember the 30-min jump cooldown</li>
+        <li>Only Energy Core Lv 15+ attackers can jump</li>
+        <li>Be online before 14:00 UTC if in main battle group</li>
+        <li>Don't enter key buildings first unless assigned</li>
+        <li>Follow focus calls; rotate damaged fleets</li>
+        <li>Claim recovery rewards after the battle</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="num">🚫</span> Don't Do This</h2>
+  <ul class="x-list">
+    <li>Spend Legendary Weapon Fragments outside Stage 2 (you lose 4,000 points each)</li>
+    <li>Excavate Legendary Ruins outside Stage 3 (you lose 15,000 points each)</li>
+    <li>Use Flagship Blueprints outside Stage 4 (you lose 2,000 points each)</li>
+    <li>Jump randomly on Battle Day — every jump = 30-min cooldown</li>
+    <li>Garrison a key building first if you're low-power (sets a low rally cap)</li>
+    <li>Chase side targets when defending — hold the Fortress</li>
+    <li>Forget to claim recovery rewards — they expire</li>
+    <li>Solo-engage during the Main Contest — feeds the enemy and disrupts rallies</li>
+  </ul>
+
+  <h2><span class="num">📢</span> Server Announcement Template</h2>
+  <div class="card">
+    <p style="white-space: pre-wrap; font-family: monospace; font-size: 13px; color: var(--text); background: var(--bg-deep); padding: 16px; border-radius: 8px; border: 1px solid var(--border)">Commanders,
+
+Dominion Warzone is a full server-vs-server event. Days 1–5 decide whether we become the Attacker or Defender for the final battle. Every point matters.
+
+Do not spend key resources randomly. Wait for the correct daily stage:
+  • Development First — combat objectives and Tribute Vessels
+  • Talent Recruitment — Champion and weapon resources
+  • Technology & Crew — tech speedups, Deep Space items, ruins
+  • Ultimate Flagship — flagship upgrades and Prismatic Cores
+
+Battle Day is Saturday. Main contest window: 14:00–18:00 UTC. If we become Attacker, players with Energy Core Lv 15+ can jump to the enemy Ascendancy Fortress. Each jump has a 30-minute cooldown — do not jump without orders.
+
+We win by coordination, not chaos. Follow calls, save resources, and be ready.</p>
+  </div>
+
+  <h2><span class="num">📊</span> All Stage Milestones at a Glance</h2>
+  <table>
+    <thead><tr><th>Stage</th><th>Theme</th><th style="text-align:left">Tier 1</th><th style="text-align:left">Tier 2</th><th>Tier 3</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Development First</td><td style="text-align:left">850K</td><td style="text-align:left">970K</td><td>1.15M</td></tr>
+      <tr><td>2</td><td>Talent Recruitment</td><td style="text-align:left">45K</td><td style="text-align:left">110K</td><td>230K</td></tr>
+      <tr><td>3</td><td>Technology & Crew</td><td style="text-align:left">26K</td><td style="text-align:left">71K</td><td>220K</td></tr>
+      <tr><td>4</td><td>Ultimate Flagship</td><td style="text-align:left">27K</td><td style="text-align:left">110K</td><td>260K</td></tr>
+      <tr><td>5</td><td>Pending</td><td style="text-align:left">—</td><td style="text-align:left">—</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="num">🔍</span> Items to Confirm In-Game</h2>
+  <div class="callout warn">
+    <div class="callout-label">Patch volatility</div>
+    Dominion Warzone is still being adjusted. Some values may shift after updates. When the event opens on your server, verify:
+  </div>
+  <ol>
+    <li>Stage 5 objectives and point values</li>
+    <li>Exact reward item names in the Attacker/Defender panels</li>
+    <li>Whether point thresholds changed after the latest patch</li>
+    <li>Whether new point quests (e.g. Map Search, Consume Repair Materials) appear</li>
+    <li>Whether server-range matchmaking or eligibility rules apply</li>
+    <li>Local-time adjustments shown in your server's event UI</li>
+  </ol>
+
+</section>
+
+<footer>
+  Dominion Warzone Guide for <strong>Foundation: Galactic Frontier</strong> · Built from in-game screenshots and public event information · Verify in-game values when the event opens on your server.
+</footer>
+
+</div>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('#tabs button');
+  const panels = document.querySelectorAll('.tab-panel');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Stage accordion
+  function toggleStage(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
