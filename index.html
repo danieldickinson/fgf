@@ -748,10 +748,10 @@
 
     <nav class="tabs" id="tabs">
       <button class="active" data-tab="dominion"><span class="dot"></span>Dominion War</button>
-      <button class="stub" data-tab="economy"><span class="dot"></span>Economy &amp; Resources</button>
-      <button class="stub" data-tab="fleet"><span class="dot"></span>Fleet &amp; Combat</button>
-      <button class="stub" data-tab="diplomacy"><span class="dot"></span>Diplomacy &amp; Alliances</button>
-      <button class="stub" data-tab="tech"><span class="dot"></span>Tech &amp; Research</button>
+      <button data-tab="economy"><span class="dot"></span>Economy &amp; Resources</button>
+      <button data-tab="fleet"><span class="dot"></span>Fleet &amp; Combat</button>
+      <button data-tab="diplomacy"><span class="dot"></span>Diplomacy &amp; Alliances</button>
+      <button data-tab="tech"><span class="dot"></span>Tech &amp; Research</button>
     </nav>
   </header>
 
@@ -1625,56 +1625,1162 @@ We win by coordination, not chaos. Follow calls, save resources, and be ready.</
   <section class="tab-panel" id="economy">
     <h2 class="section-title">Economy &amp; Resources</h2>
     <p class="section-subtitle">
-      Trade routes, resource management, Home Port buffs, and the economic engine that funds every other section of this guide.
+      Home Port, Trade Network, and the economic engine that funds every other section of this guide. Built from FunPlus's official Home Port guide and community progression playbooks.
     </p>
-    <div class="stub-card">
-      <div class="icon">&#x29C9;</div>
-      <h3>Section in Development</h3>
-      <p>Coming next: optimal Home Port leveling order, trade attempt sequencing, daily resource routine, and which buildings to prioritize when. Ask me to expand this section whenever you're ready.</p>
-      <div class="stub-tag">Coming Soon</div>
-    </div>
+
+    <nav class="subtabs" id="econ-subtabs">
+      <button class="active" data-sub="ec-overview">Overview</button>
+      <button data-sub="ec-homeport">Home Port</button>
+      <button data-sub="ec-trade">Trade &amp; Commissions</button>
+      <button data-sub="ec-routine">Daily Routine</button>
+      <button data-sub="ec-currencies">Currencies</button>
+    </nav>
+
+    <!-- OVERVIEW -->
+    <section class="sub-panel active" id="ec-overview">
+      <h3 class="no-bar">The Economy in One Picture</h3>
+      <div class="panel">
+        <p>Everything in <em>Foundation: Galactic Frontier</em> ultimately runs on three flows:</p>
+        <ol>
+          <li><strong>Trade output</strong> &mdash; your Flagship runs trade trips; trips produce Credits and resources.</li>
+          <li><strong>Guild output</strong> &mdash; your Guild's held Ports generate Resource Earnings claimable by every member.</li>
+          <li><strong>Event output</strong> &mdash; Dominion, Top 100, Arms Race, etc. pay out bundles, speedups, and premium items.</li>
+        </ol>
+        <p>The Home Port multiplies trade output. Guild Ports multiply Guild output. Event spending discipline (the Dominion stockpile rule) multiplies event output. <strong>The best economic players plan all three together</strong>, not just whichever one is in front of them today.</p>
+      </div>
+
+      <h3>Where to Focus First</h3>
+      <div class="grid-2">
+        <div class="panel">
+          <h4 style="color: var(--green)">Early Game (first 1&ndash;2 weeks)</h4>
+          <ul>
+            <li>Settle a Home Port immediately &mdash; it's the single biggest passive multiplier you'll touch</li>
+            <li>Push story missions until they unlock recruitment and ship modules</li>
+            <li>Upgrade <em>module</em> buildings (Food Processing, Crew Cabin) before cosmetic or secondary structures</li>
+            <li>Get in a Commerce Guild before you hit Energy Core Lv 5 &mdash; higher-tier Ports require it</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--amber)">Mid Game</h4>
+          <ul>
+            <li>Race your Home Port to L5+ to unlock higher trade attempts and daily reward tiers</li>
+            <li>Establish trade routes; expand them as soon as new systems open</li>
+            <li>Hold the <em>highest-value</em> consumables for Dominion stages instead of spending them as they drop</li>
+            <li>Start hoarding research speedups for event windows (Top 100, Arms Race)</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--magenta)">Late Game</h4>
+          <ul>
+            <li>Push Home Port to L7&ndash;L9 for max Trade Attempts (cap at 40) and best DR tier</li>
+            <li>Co-occupy multiple Planetary Ports in systems where your Guild holds a Star Port &mdash; this maxes Resource Earnings</li>
+            <li>Time premium spending with anchor Champion rotations (Evan Rogers, Ajita, Zora windows)</li>
+            <li>Treat your speedup reserve as a strategic asset, not a routine consumable</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--cyan)">All Stages</h4>
+          <ul>
+            <li>Claim daily rewards and Resource Earnings <em>every day</em> &mdash; unclaimed = lost</li>
+            <li>Don't spend premium consumables outside their matching Dominion stage</li>
+            <li>Auto-Raid 3&ndash;4 shrines daily for Guild Voucher feed</li>
+            <li>Keep Component drops flowing through Tribute Vessel rallies and Ascendancy Shrines</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout key">
+        <span class="callout-label">The Compounding Rule</span>
+        Every claim you skip is a multiplier you don't get next week. A L1 Home Port producing daily for a month outperforms a L5 Home Port that the owner forgets to claim for two weeks. Discipline beats raw level in the long run.
+      </div>
+    </section>
+
+    <!-- HOME PORT -->
+    <section class="sub-panel" id="ec-homeport">
+      <h3 class="no-bar">What a Home Port Does</h3>
+      <div class="panel">
+        <p>Your Home Port is the heart of your account's economic engine. Settling unlocks four things:</p>
+        <ul>
+          <li><strong>Settle-in Buff</strong> &mdash; location-specific benefits</li>
+          <li><strong>Instant Fleet Recall</strong> &mdash; teleport your fleet home (regenerates every 15 minutes)</li>
+          <li><strong>Automatic Redeployment</strong> &mdash; defeated fleets respawn near your Home Port</li>
+          <li><strong>Trader Commissions</strong> &mdash; commission refreshes happen in your Home Port's star system</li>
+        </ul>
+        <p>Each Trader can hold <strong>only one Home Port at a time</strong>. The Port level you can settle is gated by your <em>Energy Core</em> level &mdash; level up Energy Core to unlock higher-tier settlements.</p>
+      </div>
+
+      <h3>Home Port Level Benefits</h3>
+      <p>From the official guide. Three stat tracks scale with Home Port level:</p>
+      <ul>
+        <li><strong>Trade Attempts (TA)</strong> &mdash; number of trade trips your flagship can run per cycle</li>
+        <li><strong>Building Speed (BS)</strong> &mdash; reduces upgrade and construction time</li>
+        <li><strong>Daily Reward (DR)</strong> &mdash; quality of your daily chest, matching your Port level</li>
+      </ul>
+      <table>
+        <thead><tr><th>Level</th><th>Trade Attempts</th><th>Build Speed</th><th>Daily Reward Tier</th></tr></thead>
+        <tbody>
+          <tr><td>L1</td><td>10</td><td>+2%</td><td>L1</td></tr>
+          <tr><td>L2</td><td>16</td><td>+3%</td><td>L2</td></tr>
+          <tr><td>L3</td><td>20</td><td>+3%</td><td>L3</td></tr>
+          <tr><td>L4</td><td>26</td><td>+4%</td><td>L4</td></tr>
+          <tr><td>L5</td><td>30</td><td>+5%</td><td>L5</td></tr>
+          <tr><td>L6</td><td>36</td><td>+5%</td><td>L6</td></tr>
+          <tr><td>L7</td><td>40 (cap)</td><td>+6%</td><td>L7</td></tr>
+          <tr><td>L8</td><td>40</td><td>+7%</td><td>L8</td></tr>
+          <tr><td>L9</td><td>40</td><td>+8%</td><td>L9</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Picking Where to Settle</h3>
+      <div class="grid-2">
+        <div class="panel">
+          <h4>Neutral Ports</h4>
+          <ul>
+            <li>Open to any player &mdash; no Guild required</li>
+            <li>Only appear in systems up to <strong>Level 5</strong></li>
+            <li>Do <em>not</em> contribute Resource Earnings to any guild</li>
+            <li>Best for independent traders or brand-new accounts</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4>Guild-Held Planetary Ports</h4>
+          <ul>
+            <li>Require being in the Guild that controls the Port</li>
+            <li>Contribute Resource Earnings to your Guild</li>
+            <li>Add Occupation Points toward Guild Rankings</li>
+            <li>Unlock progressively through Trade Era cycles</li>
+            <li>With research, a Guild can hold up to <strong>16 Planetary Ports</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-label">Pro Tip</span>
+        Maintain at least <strong>one Planetary Port in every system where your Guild controls a Star Port</strong>. This maximizes the cumulative bonuses your guild members can claim and tightens regional defense.
+      </div>
+
+      <h3>Star Ports vs Planet Ports</h3>
+      <table>
+        <thead><tr><th></th><th>Planet Port</th><th>Star Port</th></tr></thead>
+        <tbody>
+          <tr><td>Settleable as Home Port</td><td style="color: var(--green)">Yes</td><td style="color: var(--red)">No (garrison only)</td></tr>
+          <tr><td>Provides Trade Attempts</td><td style="color: var(--green)">Yes</td><td>Trade bonuses only</td></tr>
+          <tr><td>Always open to war declarations</td><td>Conditional</td><td style="color: var(--amber)">Always</td></tr>
+          <tr><td>Major Guild trade buffs</td><td>Modest</td><td style="color: var(--green)">Strong</td></tr>
+          <tr><td>Max per Guild (with research)</td><td>16</td><td>8</td></tr>
+        </tbody>
+      </table>
+
+      <h3>How to Claim Your Rewards</h3>
+      <div class="panel">
+        <ul>
+          <li><strong>Daily Rewards</strong> &mdash; complete Trade Network Events; chest scales with Home Port level</li>
+          <li><strong>Resource Earnings</strong> &mdash; tap <em>Guild &rarr; Ports &rarr; Claim</em>; this is per-member, per-day</li>
+          <li><strong>Fleet Recall</strong> &mdash; tap the Home Port icon on the map and choose Recall (15-min cooldown)</li>
+        </ul>
+        <div class="callout warn">
+          <span class="callout-label">Don't Skip Claims</span>
+          Unclaimed rewards expire on the daily cycle. A whale who forgets to claim their Resource Earnings for a week has effectively spent on a higher Port for no gain.
+        </div>
+      </div>
+    </section>
+
+    <!-- TRADE & COMMISSIONS -->
+    <section class="sub-panel" id="ec-trade">
+      <h3 class="no-bar">The Trade Network</h3>
+      <div class="panel">
+        <p>The Trade Network is the daily activity that converts your Flagship's idle hours into Credits, resources, and commission progress. Three concepts to internalize:</p>
+        <ul>
+          <li><strong>Trade Attempts</strong> &mdash; the number of trade trips you can run per cycle (capped by Home Port level: 10 at L1 &rarr; 40 at L7+)</li>
+          <li><strong>Trade Routes</strong> &mdash; lanes between systems; better routes unlock as you progress through Trade Eras</li>
+          <li><strong>Trader Commissions</strong> &mdash; daily quest-style objectives that refresh in your Home Port's star system</li>
+        </ul>
+      </div>
+
+      <h3>Running Trade Attempts</h3>
+      <ul>
+        <li>Run your full daily allotment of Trade Attempts &mdash; missed attempts don't roll over</li>
+        <li>Prioritize routes to systems where your Guild holds a Star Port (Star Ports grant a 20% trade bonus when trading <em>to</em> the system from your Home Port)</li>
+        <li>If you hold multiple Guild Ports, rotate which Port your flagship trades from to maximize coverage</li>
+        <li>Don't run trade attempts that overlap with Dominion's combat stages &mdash; use that time for Tribute Vessel rallies instead</li>
+      </ul>
+
+      <h3>Commissions &mdash; Daily Point Floors</h3>
+      <div class="panel">
+        <p>Commissions are short, repeatable objectives. They're a steady source of Credits and a meaningful piece of the Dominion scoring stack (Stage 2 and Stage 4 both reward commissions). Even free-to-play players can clear them daily.</p>
+
+        <h4>Commission Rarity &amp; Reward Scale</h4>
+        <p>Higher-rarity commissions give more reward and more event points. Reward scaling roughly follows:</p>
+        <table>
+          <thead><tr><th>Rarity</th><th>Dominion Stage 2/4 Points</th></tr></thead>
+          <tbody>
+            <tr><td>Common</td><td>+2,000</td></tr>
+            <tr><td>Uncommon</td><td>+2,500</td></tr>
+            <tr><td>Rare</td><td>+2,750</td></tr>
+            <tr><td>Epic</td><td>+3,000</td></tr>
+            <tr><td>Legendary</td><td>+3,250</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <span class="callout-label">Commission Refreshes</span>
+          Stockpile Commission Refreshes for Dominion Stage 2 and Stage 4. Refreshing a low-rarity commission into a higher-rarity one during those stages stacks event points and Credits at the same time.
+        </div>
+      </div>
+
+      <h3>Trade Network Events</h3>
+      <div class="panel">
+        <p>Completing Trade Network Events is the gate for claiming your Home Port's daily reward chest. The chest tier matches your Port level (L1&ndash;L9), so a maxed Home Port that misses daily events is leaving real progression on the table every 24 hours.</p>
+        <ul>
+          <li>Run your daily commission and trade route quota</li>
+          <li>Hit the event progress threshold before reset</li>
+          <li>Claim the daily reward in the Trade Network panel</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- DAILY ROUTINE -->
+    <section class="sub-panel" id="ec-routine">
+      <h3 class="no-bar">The Daily Routine</h3>
+      <p>An efficient FGF day is short &mdash; 15&ndash;20 minutes of touch time, plus auto-raid overnight. Below is the standard "claim, run, set, log off" loop that competitive players run every single day. Miss days = compound loss.</p>
+
+      <h3>Morning (5 minutes)</h3>
+      <ol class="steps">
+        <li><strong>Claim Resource Earnings</strong> &mdash; Guild &rarr; Ports &rarr; Claim. Don't skip.</li>
+        <li><strong>Claim daily rewards</strong> &mdash; Home Port daily chest, mail inbox, login bonuses.</li>
+        <li><strong>Check active Dominion stage</strong> (during event weeks). Decide which consumables to spend today and which to hold.</li>
+      </ol>
+
+      <h3>Midday (5 minutes)</h3>
+      <ol class="steps">
+        <li><strong>Run a full set of Trade Attempts</strong> &mdash; up to your TA cap (40 at L7+).</li>
+        <li><strong>Clear your commissions</strong> &mdash; refresh during Dominion Stage 2/4 to convert low-rarity into high-rarity.</li>
+        <li><strong>Donate / assist in the Commerce Guild</strong> &mdash; small per-action points, but adds up for the Guild score.</li>
+      </ol>
+
+      <h3>Evening (10 minutes)</h3>
+      <ol class="steps">
+        <li><strong>Run 3&ndash;4 shrine battles</strong> at the highest level you reliably clear. Primary source of Guild Vouchers.</li>
+        <li><strong>Join any active Tribute Vessel rallies</strong> &mdash; Sacred Tribute especially. Prismatic Cores accumulate here.</li>
+        <li><strong>Update your research queue</strong> &mdash; if a node finishes overnight, the next one is auto-queued.</li>
+        <li><strong>Set Auto-Raid</strong> on a winnable target before logging off.</li>
+        <li><strong>Check Guild chat / Discord</strong> for tomorrow's calls and any flagged events.</li>
+      </ol>
+
+      <h3>Weekly (15 minutes, once)</h3>
+      <ol class="steps">
+        <li><strong>Audit Component drops</strong> from the Glory Shop, Tribute Vessels, and Ascendancy Shrines. Apply upgrades.</li>
+        <li><strong>Review your speedup reserve</strong>. If a Top 100 / Arms Race event is coming this weekend, hoard. If not, light a build queue.</li>
+        <li><strong>Check Energy Core level</strong> &mdash; if you're close to a tier breakpoint, push through it (gates Home Port and module access).</li>
+        <li><strong>Watch the Xarnas cycle</strong> &mdash; if your Guild is contesting Trade Prince this week, plan around it.</li>
+      </ol>
+
+      <div class="callout tip">
+        <span class="callout-label">The Lazy-Day Minimum</span>
+        On days when you only have two minutes: claim Resource Earnings, run any trade attempts, set Auto-Raid. That's it. Skipping this floor is what gives even the smallest players a multi-week compounding loss.
+      </div>
+    </section>
+
+    <!-- CURRENCIES -->
+    <section class="sub-panel" id="ec-currencies">
+      <h3 class="no-bar">Currencies &amp; Resources</h3>
+      <p>The currencies and resources that actually move the needle in FGF, what they're for, and where they come from.</p>
+
+      <h3>Primary Currencies</h3>
+      <table>
+        <thead><tr><th>Currency</th><th>What it does</th><th>Main sources</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Credits</strong></td><td>Soft currency. Funds builds, recruitment, basic upgrades.</td><td>Trade Network, daily rewards, packs</td></tr>
+          <tr><td><strong>Glory Points</strong></td><td>PvP currency. Spend in the Glory Shop for Components, cosmetics, premium upgrades.</td><td>PVP kills, Glory Zone events, GVG performance</td></tr>
+          <tr><td><strong>Guild Vouchers</strong></td><td>Guild-store currency. Spend on Guild-exclusive items.</td><td>Shrine kills, daily missions, donations</td></tr>
+          <tr><td><strong>Prismatic Cores</strong></td><td>The rarest upgrade resource. Drives module Breakthroughs.</td><td>Sacred Tribute rallies (primary), event drops</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Premium Consumables (Hoard These)</h3>
+      <p>These items convert directly to event points during Dominion stages. The single biggest compounding mistake is spending them between events.</p>
+      <table>
+        <thead><tr><th>Item</th><th>Best Use</th><th>Dominion Stage</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Champion Fragments (Legendary)</strong></td><td>Champion level/tier-up</td><td>Stage 2 &mdash; +2,000 each</td></tr>
+          <tr><td><strong>Weapon Prisms</strong></td><td>Weapon upgrade</td><td>Stage 2 &mdash; +2,000 each</td></tr>
+          <tr><td><strong>Weapon Energy Cores</strong></td><td>Weapon power</td><td>Stage 2 &mdash; +6 each</td></tr>
+          <tr><td><strong>Legendary Weapon Fragments</strong></td><td>Weapon construction</td><td>Stage 2 &mdash; +4,000 each (best rate)</td></tr>
+          <tr><td><strong>Venturous Memories</strong></td><td>Champion advancement</td><td>Stage 2 &mdash; +1,200 each</td></tr>
+          <tr><td><strong>Technology Speedups</strong></td><td>Research</td><td>Stage 3 &mdash; +16 per minute</td></tr>
+          <tr><td><strong>Echoes of Deep Space</strong></td><td>Deep Space progression</td><td>Stage 3 &mdash; +8,000 each</td></tr>
+          <tr><td><strong>Flagship Blueprints</strong></td><td>Flagship construction</td><td>Stage 4 &mdash; +2,000 each</td></tr>
+          <tr><td><strong>Prismatic Cores</strong></td><td>Module Breakthroughs</td><td>Stage 4 &mdash; +150 each</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Resources from Specific Sources</h3>
+      <div class="grid-2">
+        <div class="panel">
+          <h4>Sacred Tribute Rallies</h4>
+          <p>Primary source of Prismatic Cores &mdash; the rarest resource in the game. Coordinated Guild participation is mandatory. Schedule these; the Guild that runs them consistently accumulates a Breakthrough advantage that compounds across every other player.</p>
+        </div>
+        <div class="panel">
+          <h4>Ascendancy Shrines</h4>
+          <p>Source of Flagship Components and a steady drip of Guild Vouchers. 3&ndash;4 shrine battles per day at your highest manageable level is the standard cadence.</p>
+        </div>
+        <div class="panel">
+          <h4>Glory Shop</h4>
+          <p>Spends Glory Points (from PvP kills and Glory Zone events). Buy Flagship Components, cosmetic items, and premium upgrades here. Don't sleep on the rotating premium slots.</p>
+        </div>
+        <div class="panel">
+          <h4>Tribute Vessels</h4>
+          <p>Drop Components, materials, and Dominion event points (Stage 1: +6,000 per rallied kill). Run as a Guild &mdash; solo attempts fail or under-perform.</p>
+        </div>
+      </div>
+
+      <div class="callout key">
+        <span class="callout-label">The Spending Discipline Rule</span>
+        Never spend a hoarded premium consumable outside its matching Dominion stage. A Legendary Weapon Fragment used in Week 3 of preparation produces zero event points. The same fragment used during Stage 2 produces +4,000 points. <strong>The opportunity cost of off-stage spending is the difference between Attacker and Defender on Battle Day.</strong>
+      </div>
+    </section>
   </section>
 
   <!-- ===================== FLEET ===================== -->
   <section class="tab-panel" id="fleet">
     <h2 class="section-title">Fleet &amp; Combat</h2>
     <p class="section-subtitle">
-      Flagship formations &mdash; Beam, Ionic, Kinetic &mdash; champion lineups, fleet composition, and tactical combat.
+      Energy Types, champion synergy, flagship formations, and the tactical mechanics that decide every fight — built from FunPlus's <em>Mastering Fleet Power</em> guide and community formation playbooks.
     </p>
-    <div class="stub-card">
-      <div class="icon">&#x2691;</div>
-      <h3>Section in Development</h3>
-      <p>Coming next: full formation matrix, hero pairings for each damage type, fleet pacing in Port Wars, and burst vs sustain DPS roles. Ask me to flesh this out whenever you're ready.</p>
-      <div class="stub-tag">Coming Soon</div>
-    </div>
+
+    <nav class="subtabs" id="fleet-subtabs">
+      <button class="active" data-sub="fl-overview">Overview</button>
+      <button data-sub="fl-energy">Energy Types</button>
+      <button data-sub="fl-stats">Stats &amp; Synergy</button>
+      <button data-sub="fl-formations">Formations</button>
+      <button data-sub="fl-tactics">Combat Tactics</button>
+    </nav>
+
+    <!-- ===== FLEET OVERVIEW ===== -->
+    <section class="sub-panel active" id="fl-overview">
+      <h3 class="no-bar">How Combat Actually Works</h3>
+      <div class="panel">
+        <p>A fleet in <em>Foundation: Galactic Frontier</em> is one <strong>Flagship</strong> plus up to <strong>three Champions</strong>. The Flagship sets the fleet's <em>Energy Type</em> (Beam, Kinetic, or Ionic), the Champions slot in alongside it, and almost every combat number you care about flows from how well these four pieces are aligned.</p>
+        <p>Three systems decide most fights:</p>
+        <ol>
+          <li><strong>Energy Type matchup</strong> — a rock-paper-scissors triangle that grants a flat <em>+5% damage</em> when you have the advantage.</li>
+          <li><strong>Champion synergy</strong> — Champions of the same Energy Type as your Flagship grant <em>+10%/+20% ATK, DEF, and INT</em> to the whole fleet (at 2/3 matching).</li>
+          <li><strong>Formation activation order</strong> — Champion skills fire left-to-right, so debuffs and supports go first, damage dealers last.</li>
+        </ol>
+      </div>
+
+      <h3>The Four Combat Levers</h3>
+      <div class="grid-2">
+        <div class="panel">
+          <h4 style="color: var(--cyan)">Flagship</h4>
+          <p>The command ship. Sets your fleet's Energy Type (Beam/Kinetic/Ionic) and runs a <em>Style</em> determined by its Core Component. Currently top picks: <strong>Gram</strong> (Beam, stat powerhouse), <strong>Demerzel</strong> (Ionic, control/debuff), <strong>Opportunity</strong> (Kinetic, auto-raid).</p>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--amber)">Champions</h4>
+          <p>Up to three Champions per Flagship. Each has a passive (always on), an active (combat skill), and an ultimate (battle-changer). Champions of the <em>matching</em> Energy Type unlock their Flagship bonuses and stack synergy stats.</p>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--magenta)">Core Component &amp; Style</h4>
+          <p>Your Flagship's Core Component determines its damage <em>Style</em>. Swapping Components lets you counter enemy Styles for a separate <strong>+5%</strong> damage bonus on top of the Energy Type advantage — stack both for up to <strong>+10%</strong>.</p>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--green)">Formation Order</h4>
+          <p>Skills activate left to right. Place supports and debuffers first so their buffs/debuffs land <em>before</em> your damage dealers swing. Rearranging the slot order is one of the highest-leverage free upgrades in the game.</p>
+        </div>
+      </div>
+
+      <div class="callout key">
+        <span class="callout-label">The Big Idea</span>
+        Fleet power is multiplicative, not additive. Energy advantage (+5%) × synergy bonus (+20%) × Core Component advantage (+5%) × correct formation order is the difference between winning a fight and getting picked apart at equal raw power. Mid-tier players who master these multipliers regularly out-perform whales who don't.
+      </div>
+    </section>
+
+    <!-- ===== ENERGY TYPES ===== -->
+    <section class="sub-panel" id="fl-energy">
+      <h3 class="no-bar">The Energy Type Triangle</h3>
+      <p>Every ship in the game specializes in one of three Energy Types. They counter each other in a strict rock-paper-scissors triangle. Hitting an enemy with the type you counter grants a flat <strong>+5% damage</strong> — small alone, decisive in close fights, devastating when stacked with Core Component advantage.</p>
+
+      <div class="grid-3">
+        <div class="panel" style="border-left: 3px solid var(--cyan)">
+          <h4 style="color: var(--cyan)">⚡ Beam</h4>
+          <p>Concentrated energy beams that pierce armor with <em>sustained, precision damage</em>.</p>
+          <ul style="font-size: 14px">
+            <li><strong>Strong vs:</strong> Kinetic</li>
+            <li><strong>Weak vs:</strong> Ionic</li>
+            <li><strong>Role:</strong> Consistent DPS, the meta competitive standard</li>
+          </ul>
+        </div>
+        <div class="panel" style="border-left: 3px solid var(--amber)">
+          <h4 style="color: var(--amber)">💥 Kinetic</h4>
+          <p>Solid projectiles for <em>massive impact and high burst damage</em>.</p>
+          <ul style="font-size: 14px">
+            <li><strong>Strong vs:</strong> Ionic</li>
+            <li><strong>Weak vs:</strong> Beam</li>
+            <li><strong>Role:</strong> Burst damage; best for auto-raid efficiency</li>
+          </ul>
+        </div>
+        <div class="panel" style="border-left: 3px solid var(--magenta)">
+          <h4 style="color: var(--magenta)">⚛ Ionic</h4>
+          <p>Charged particles that <em>disrupt systems</em> and weaken enemy performance.</p>
+          <ul style="font-size: 14px">
+            <li><strong>Strong vs:</strong> Beam</li>
+            <li><strong>Weak vs:</strong> Kinetic</li>
+            <li><strong>Role:</strong> Control, debuffs, and the natural counter to Beam-heavy enemies</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Quick Matchup Table</h3>
+      <table>
+        <thead><tr><th>Your Fleet</th><th>vs Beam</th><th>vs Kinetic</th><th>vs Ionic</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Beam</strong></td><td>Neutral</td><td style="color: var(--green)">+5% (advantage)</td><td style="color: var(--red)">−5% (disadvantage)</td></tr>
+          <tr><td><strong>Kinetic</strong></td><td style="color: var(--red)">−5%</td><td>Neutral</td><td style="color: var(--green)">+5%</td></tr>
+          <tr><td><strong>Ionic</strong></td><td style="color: var(--green)">+5%</td><td style="color: var(--red)">−5%</td><td>Neutral</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <span class="callout-label">Why This Matters at the Guild Level</span>
+        A guild where every whale builds Beam is exploitable: a coordinated Ionic guild walks through them. Top guilds maintain a deliberate <strong>distribution across all three types</strong> so they can field the right counter regardless of who they draw. Have the type-distribution conversation with your top spenders <em>before</em> they commit champion investment.
+      </div>
+
+      <h3>Core Component Style — The Second +5%</h3>
+      <div class="panel">
+        <p>Your Flagship's <strong>Core Component</strong> sets a separate damage <em>Style</em> on top of the Energy Type. Swapping Components lets you stack another <strong>+5% damage</strong> when you have the Style advantage. The two bonuses are independent and combine — meaning a properly-prepped fleet against a poorly-prepped enemy of the same power can swing up to <strong>+10%</strong> damage before any other modifier kicks in.</p>
+        <ul>
+          <li>Carry alternate Core Components when content allows the swap</li>
+          <li>Components scale with quality — higher-tier components give larger base ATK/DEF/INT boosts on top of the Style bonus</li>
+          <li>Source Components from the <strong>Glory Shop</strong>, <strong>Ascendancy Shrines</strong>, and <strong>Tribute Vessels</strong></li>
+        </ul>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-label">Locked-In Spending</span>
+        Modules, Component Blueprints, and formation accessories <strong>align to your Flagship's Energy Type</strong>. Kinetic modules don't work on a Beam Flagship. Confirm your type choice <em>before</em> spending on any module-adjacent content — this is the one area in FGF where reactive spending is irreversible.
+      </div>
+    </section>
+
+    <!-- ===== STATS & SYNERGY ===== -->
+    <section class="sub-panel" id="fl-stats">
+      <h3 class="no-bar">The Three Stats</h3>
+      <p>Every Flagship and Champion contributes to three core stats. Understand what each one actually does before you spend on accessories.</p>
+
+      <div class="grid-3">
+        <div class="panel">
+          <h4 style="color: var(--red)">ATK — Attack</h4>
+          <p>Raw damage output. The headline stat for any DPS Champion or Beam/Kinetic-focused build. ATK scales basic attacks and the damage of abilities that read off ATK.</p>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--cyan)">DEF — Defense</h4>
+          <p>Reduces incoming damage. Doesn't show up on kill-feed posters, but DEF is what lets your formation outlast longer engagements (Port sieges, sustained Dominion contests). Stack on tanks.</p>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--magenta)">INT — Intelligence</h4>
+          <p>Boosts <em>ability efficiency</em>: damage of skill-based attacks, strength of heals, depth of debuffs. INT is what makes support and control Champions (Ajita, Demerzel, etc.) actually matter.</p>
+        </div>
+      </div>
+
+      <h3>Champion Synergy — Matching Type to Flagship</h3>
+      <div class="panel">
+        <p>Champions have their own Energy Type. When their type matches your Flagship's, they unlock that Flagship's specific bonuses <em>and</em> contribute to a stacked synergy bonus across the whole fleet.</p>
+
+        <table>
+          <thead><tr><th>Matching Champions</th><th>Fleet-wide bonus</th></tr></thead>
+          <tbody>
+            <tr><td><strong>3 matching Champions</strong></td><td style="color: var(--green)">+20% ATK, DEF, and INT</td></tr>
+            <tr><td><strong>2 matching Champions</strong></td><td style="color: var(--amber)">+10% ATK, DEF, and INT</td></tr>
+            <tr><td>1 or 0 matching</td><td>No synergy bonus</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout bad">
+          <span class="callout-label">Costly Mistake</span>
+          Champions of the wrong Energy Type <em>do not</em> trigger their Flagship-specific bonuses, even at maximum investment. Building a Beam Champion for an Ionic Flagship is essentially wasted spend. Always check Champion type before committing pulls, fragments, or pack purchases.
+        </div>
+      </div>
+
+      <h3>How Bonuses Stack</h3>
+      <p>The damage and stat multipliers in FGF combat are designed to compound. A well-aligned fleet looks like this on the math sheet:</p>
+      <table>
+        <thead><tr><th>Source</th><th>Bonus</th></tr></thead>
+        <tbody>
+          <tr><td>3 matching-type Champions</td><td>+20% ATK / DEF / INT</td></tr>
+          <tr><td>Energy Type advantage vs target</td><td>+5% damage</td></tr>
+          <tr><td>Core Component Style advantage</td><td>+5% damage</td></tr>
+          <tr><td>Higher-quality Flagship Components</td><td>Variable ATK/DEF/INT bonuses</td></tr>
+          <tr><td>War Frenzy (Dominion garrisons)</td><td>Shared across fleets at same building</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <span class="callout-label">Mid-Tier Edge</span>
+        A mid-power fleet running 3-matching synergy + Energy advantage + Component advantage will routinely out-damage a higher-power fleet running mismatched champions or mismatched components. <strong>Composition beats raw power up to roughly a 20% spend gap.</strong>
+      </div>
+    </section>
+
+    <!-- ===== FORMATIONS ===== -->
+    <section class="sub-panel" id="fl-formations">
+      <h3 class="no-bar">The Three Flagship Formations</h3>
+      <p>Each Energy Type has a canonical "core" formation built around an anchor Champion plus two role players. The anchor sets the formation's identity; the supporting Champions cover survivability, sustain, or burst depending on the type. Pick your formation <em>before</em> committing serious champion investment — switching is expensive and slow.</p>
+
+      <!-- BEAM -->
+      <div class="panel" style="border-left: 4px solid var(--cyan)">
+        <h3 style="color: var(--cyan); margin-top: 0">⚡ Beam Formation — The Competitive Standard</h3>
+        <p>The strongest formation at current meta for PVP, GVG, and Port Wars. Built around sustained DPS and survivability. <strong>If competitive standing is the goal, build Beam.</strong></p>
+
+        <h4>Flagship: Gram</h4>
+        <p>Pure stat powerhouse. Damage mitigation and regeneration kit; carries the formation through extended engagements.</p>
+
+        <h4>Core Composition</h4>
+        <table class="plain">
+          <thead><tr><th>Slot</th><th>Champion</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Anchor</strong></td><td><strong>Evan Rogers</strong></td><td>Limited legendary. Passive (Expert Proficiency) buffs ATK for the whole Beam formation. Active (Hunting Time) fires sustained high-energy lasers. Ultimate (Desire to Kill) amplifies formation ability damage by 10%. Buy during his rotation window — everything else waits.</td></tr>
+            <tr><td><strong>Spine</strong></td><td><strong>Aliya</strong></td><td>Non-limited, build at a steady pace before Evan arrives and after. Support-tank hybrid. Keeps Evan in the fight through long sieges. Her ceiling is high enough she never becomes dead investment.</td></tr>
+            <tr><td><strong>Survivability</strong></td><td><strong>Doug Rockwell</strong></td><td>Tank. Absorbs concentrated fire during multi-flagship Glory Zone engagements. The difference between a Beam formation that holds and one that gets melted.</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>When to build:</strong> If you want to compete in GVG, Port Wars, and Dominion's PVP day at the highest level, Beam is the answer.</p>
+      </div>
+
+      <!-- ION -->
+      <div class="panel" style="border-left: 4px solid var(--magenta)">
+        <h3 style="color: var(--magenta); margin-top: 0">⚛ Ionic Formation — Aggression with Sustain</h3>
+        <p>Built for aggressive burst output with self-healing baked into the composition. The natural counter to Beam-heavy servers.</p>
+
+        <h4>Flagship: Demerzel</h4>
+        <p>The premium Ionic option. Doesn't try to out-stat Gram; <em>out-controls</em> it. Main skill reduces enemy energy generation (up to 18% at Tier 3) and applies Tactical Oppression (cuts enemy ATK and INT by 20%).</p>
+
+        <h4>Core Composition</h4>
+        <table class="plain">
+          <thead><tr><th>Slot</th><th>Champion</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Anchor</strong></td><td><strong>Ajita</strong></td><td>Defining Ionic Champion. Passive buffs whole-formation ATK. Active restores formation HP as a percentage of total ATK (sustain scales <em>with</em> your damage). Ultimate reduces incoming ability damage by 10%. Offense amplifier and healing engine in one slot.</td></tr>
+            <tr><td><strong>Foundation</strong></td><td><strong>Jodie Beart</strong></td><td>Sustained damage anchor. Keeps pressure on between Ajita's healing windows.</td></tr>
+            <tr><td><strong>Burst</strong></td><td><strong>Lily</strong></td><td>DPS spike. Combines with Ajita's amplification to produce short-window burst that exceeds Beam in 5–10 second engagements — how Ionic punishes overextending Beam formations.</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>Placeholder before Ajita arrives:</strong> <em>Phade</em> serves as the primary, but don't over-invest — once Ajita lands she replaces Phade entirely, and potential invested in Phade does not transfer.</p>
+      </div>
+
+      <!-- KINETIC -->
+      <div class="panel" style="border-left: 4px solid var(--amber)">
+        <h3 style="color: var(--amber); margin-top: 0">💥 Kinetic Formation — Auto-Raid Specialist</h3>
+        <p>The weakest of the three for direct head-to-head PVP at equivalent investment — but the <em>best</em> formation for automated content (shrines, daily raids, passive resource generation).</p>
+
+        <h4>Flagship: Opportunity (or Gram with Kinetic kit) for budget builds; Demerzel-tier premium is rare for Kinetic at competitive PVP level</h4>
+        <p>The premium Kinetic flagship requires four-digit dollar investment to become PVP-competitive — not where new whales should start.</p>
+
+        <h4>Core Composition</h4>
+        <table class="plain">
+          <thead><tr><th>Slot</th><th>Champion</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Anchor</strong></td><td><strong>Zora Dominii</strong></td><td>Shop-exclusive (no pull path). Passive boosts Kinetic flagship INT. Active fires four consecutive attacks plus a Thermal Swarmer wide-area burst. Ultimate buffs all-Champion ability damage by 10%. Partial Zora builds underperform — full commitment or skip.</td></tr>
+            <tr><td><strong>DPS support</strong></td><td><strong>Killer Bee</strong></td><td>S-tier DPS with self-healing. Steady output and survivability in one slot.</td></tr>
+            <tr><td><strong>Defense / Sustain</strong></td><td><strong>Cocoon</strong> (or another INT/DEF Champion)</td><td>Tank with healing and shields. Lets the Kinetic kit grind through repeat auto-raid cycles without manual intervention.</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>When to build:</strong> If you play a lot of offline / auto-raid content and want a formation that grinds resources passively while you sleep. Not the answer for competitive PVP unless paired with a Beam or Ionic main fleet.</p>
+      </div>
+
+      <h3>Formation Decision Cheat Sheet</h3>
+      <table>
+        <thead><tr><th>Your priority</th><th>Build</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Win Port Wars &amp; GVG</td><td><strong>Beam</strong></td><td>Highest competitive ceiling, Evan Rogers anchors the meta</td></tr>
+          <tr><td>Counter a Beam-heavy server</td><td><strong>Ionic</strong></td><td>Aggression with sustain, type-advantage vs Beam</td></tr>
+          <tr><td>Maximize auto-raid &amp; offline progression</td><td><strong>Kinetic</strong></td><td>Best efficiency for shrines and passive resource gen</td></tr>
+          <tr><td>Second formation on an established account</td><td>Whichever you don't have</td><td>Diversify so your account can counter any matchup</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== COMBAT TACTICS ===== -->
+    <section class="sub-panel" id="fl-tactics">
+      <h3 class="no-bar">Formation Order — The Free Upgrade</h3>
+      <div class="panel">
+        <p>Champion skills activate in the order they're placed in your formation, <strong>left to right</strong>. This single rule changes how you should build every formation.</p>
+
+        <h4>The General Rule</h4>
+        <ol>
+          <li><strong>Slot 1 (leftmost):</strong> Debuffer or support. Their effect lands first and weakens the enemy / buffs your fleet <em>before</em> damage starts flowing.</li>
+          <li><strong>Slot 2:</strong> Sustain or secondary control. Healing and continuing pressure.</li>
+          <li><strong>Slot 3 (rightmost):</strong> Burst damage dealer. Their ultimate hits last and benefits from every buff/debuff above.</li>
+        </ol>
+
+        <div class="callout tip">
+          <span class="callout-label">Concrete Example — Ionic Formation</span>
+          Slot 1: <strong>Ajita</strong> (debuff + heal lands first) → Slot 2: <strong>Jodie</strong> (sustained ATK flows in) → Slot 3: <strong>Lily</strong> (burst lands with both buffs active). Rearranging this order can swing fight outcomes more than a full champion level.
+        </div>
+      </div>
+
+      <h3>Target Selection</h3>
+      <div class="grid-2">
+        <div class="panel">
+          <h4>PVP &amp; GVG</h4>
+          <ul>
+            <li>Lead with the Energy Type that <em>counters</em> the enemy's main fleet — that's a free +5%.</li>
+            <li>Engage from the front for full DPS. Rear-position attacks waste energy and lose burst potential.</li>
+            <li>Don't chase isolated trader ships in major fights — feeds the enemy and disrupts your own rallies.</li>
+            <li>For Port Wars, hold burst damage executors in reserve for the <em>final hit</em>. The guild that lands the killing blow wins — not the guild that does the most damage overall.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4>PVE Targets</h4>
+          <ul>
+            <li><strong>Tribute Vessels</strong> — rally-coordinated. Massive Dominion points; never solo these.</li>
+            <li><strong>Ascendancy Minions</strong> — solo farmable. Hit the highest level you can clear <em>efficiently</em>, not the highest level you can technically clear.</li>
+            <li><strong>Shrines</strong> — primary auto-raid target. 3–4 per day at your highest manageable level is the standard farming cadence.</li>
+            <li><strong>Ruins</strong> — Dominion gold during Stage 3. Plundering = +25K points each.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Auto-Raid Routine</h3>
+      <div class="panel">
+        <p>Auto-Raid is how you keep your account growing while you're offline. The standard daily cadence:</p>
+        <ol class="steps">
+          <li><strong>Run 3–4 shrine battles</strong> at the highest level your formation reliably clears. Shrine kills are the primary source of Guild Vouchers and daily mission rewards.</li>
+          <li><strong>Set Auto-Raid before logging off.</strong> Gram with a Kinetic INT/DEF team is the canonical farming setup, but any clearing-capable formation works.</li>
+          <li><strong>Don't over-stretch.</strong> If a level reliably wins but takes 90% of your fleet HP, drop one tier. Auto-Raid stops if a fight fails — losing one fight costs you the whole cycle.</li>
+          <li><strong>Check Components drops daily.</strong> Tribute Vessels and Ascendancy Shrines drop Flagship Components — these are the highest-impact upgrades you can stack between major investments.</li>
+        </ol>
+      </div>
+
+      <h3>Power Scaling — What Actually Grows Your Fleet</h3>
+      <p>In order of return per hour/dollar invested:</p>
+      <ol class="steps">
+        <li><strong>Match Champion type to Flagship.</strong> Free. Skipping this is the most expensive mistake in the game.</li>
+        <li><strong>Fix your formation order.</strong> Free. Move debuffs to slot 1, burst to slot 3.</li>
+        <li><strong>Carry alternate Core Components</strong> for Style swaps when content allows. Cheap, +5% damage per swap.</li>
+        <li><strong>Upgrade Flagship Components</strong> from the Glory Shop, Tribute Vessel drops, Ascendancy Shrines. Steady ATK/DEF/INT gains.</li>
+        <li><strong>Push your anchor Champion to next tier breakpoint.</strong> Tier jumps unlock new ability levels and big stat steps.</li>
+        <li><strong>Buy during your anchor's rotation window only.</strong> Evan Rogers / Ajita / Zora windows are when champion fragment efficiency is highest. Spending outside the window is reactive and wasteful.</li>
+      </ol>
+
+      <h3>Anti-Patterns</h3>
+      <ul class="x-list">
+        <li>Building Champions of mismatched Energy Type — they don't unlock Flagship-specific bonuses.</li>
+        <li>Spending on modules before your Flagship type is locked in — modules are type-locked.</li>
+        <li>Over-investing in Phade after Ajita's rotation is on the horizon — Phade is a placeholder, not a long-term spine.</li>
+        <li>Putting your DPS Champion in slot 1 — their burst fires before debuffs land, wasting the multiplier.</li>
+        <li>Auto-Raiding at a level you barely clear — one loss kills the whole cycle.</li>
+        <li>Building only one Energy Type across the guild — coordinated opponents will counter you every Port War.</li>
+      </ul>
+
+      <div class="callout key">
+        <span class="callout-label">Bottom Line</span>
+        Pick a Flagship type with intent. Match all three Champion slots. Order them so supports fire first, damage fires last. Carry a Core Component swap when you can. Run Auto-Raid every night. <strong>The fleet that compounds these multipliers will out-perform a higher-power fleet that doesn't every single time.</strong>
+      </div>
+    </section>
   </section>
 
   <!-- ===================== DIPLOMACY ===================== -->
   <section class="tab-panel" id="diplomacy">
     <h2 class="section-title">Diplomacy &amp; Alliances</h2>
     <p class="section-subtitle">
-      Guild relationships, alliance pacts, NAPs, server politics, and managing the Xarnas Trade Prince competition.
+      Commerce Guilds, server politics, the Xarnas Trade Prince cycle, and the realities of cross-guild coordination on a competitive server.
     </p>
-    <div class="stub-card">
-      <div class="icon">&#x269B;</div>
-      <h3>Section in Development</h3>
-      <p>Coming next: cross-guild coordination protocols, when to ally vs when to compete, Xarnas cycle planning, and reading the server power map. Ask me to expand this section whenever you're ready.</p>
-      <div class="stub-tag">Coming Soon</div>
-    </div>
+
+    <nav class="subtabs" id="diplo-subtabs">
+      <button class="active" data-sub="dp-overview">Overview</button>
+      <button data-sub="dp-guild">Guild Structure</button>
+      <button data-sub="dp-xarnas">Xarnas Trade Prince</button>
+      <button data-sub="dp-politics">Server Politics</button>
+      <button data-sub="dp-playbook">Diplomacy Playbook</button>
+    </nav>
+
+    <!-- OVERVIEW -->
+    <section class="sub-panel active" id="dp-overview">
+      <h3 class="no-bar">Why Diplomacy Matters in FGF</h3>
+      <div class="panel">
+        <p><em>Foundation: Galactic Frontier</em> is a Guild game wearing a Trader skin. Almost everything past the first week &mdash; Port Wars, Dominion, the Xarnas competition, Top 100 ranking &mdash; is decided by Guild and inter-Guild relationships. The strongest individual account on a server cannot beat a coordinated mid-tier alliance.</p>
+        <p>Three diplomatic systems govern the meta:</p>
+        <ol>
+          <li><strong>Commerce Guilds</strong> &mdash; your home unit. Members, officers, Chairman.</li>
+          <li><strong>Inter-Guild Alliances</strong> &mdash; the informal pacts (NAPs, attack-cooperation, shared Discord) between Guilds on the same server.</li>
+          <li><strong>The Xarnas Trade Prince Competition</strong> &mdash; the server-wide political event that decides which Guild gets decree power for a whole week.</li>
+        </ol>
+      </div>
+
+      <h3>The Diplomatic Stack</h3>
+      <div class="grid-3">
+        <div class="panel">
+          <h4 style="color: var(--cyan)">Within Your Guild</h4>
+          <p>Internal coordination: rally roles, role assignments, who-does-what for Tribute rallies, Port Wars, and Battle Day. Run by Chairman + Executives.</p>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--amber)">Between Guilds (Same Server)</h4>
+          <p>Inter-guild Discord, NAPs, shared maps, Xarnas alliances. The layer that decides whether your server out-coordinates the enemy on Dominion's Battle Day.</p>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--magenta)">Cross-Server</h4>
+          <p>Mostly relevant for Dominion Warzone (server-vs-server) and Top 100 leaderboards. Less day-to-day, but the decisive layer for major events.</p>
+        </div>
+      </div>
+
+      <div class="callout key">
+        <span class="callout-label">The Hard Truth</span>
+        A server with three rival Guilds that refuse to coordinate will lose Dominion to a server with three Guilds that have a shared Discord and a designated server commander. Building inter-Guild relationships is not optional &mdash; it's the single highest-leverage thing R5s can do outside of recruiting.
+      </div>
+    </section>
+
+    <!-- GUILD STRUCTURE -->
+    <section class="sub-panel" id="dp-guild">
+      <h3 class="no-bar">Commerce Guild Roles</h3>
+      <p>FGF Guilds have a clear hierarchy, with permissions tied to each role. Understand who can do what.</p>
+
+      <table>
+        <thead><tr><th>Role</th><th>Tag</th><th>Authority</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Chairman</strong></td><td>R5</td><td>Sole top authority. Can declare Port Wars, manage Guild research, recruit/kick, assign titles. One per Guild.</td></tr>
+          <tr><td><strong>Executive Manager</strong></td><td>R4</td><td>Can also declare Port Wars. Lead war operations, schedule rallies, coordinate roles. Typically 2&ndash;5 per Guild.</td></tr>
+          <tr><td><strong>Senior Member</strong></td><td>R3</td><td>Trusted officer. Limited management permissions, but recognized voice.</td></tr>
+          <tr><td><strong>Member</strong></td><td>R2</td><td>Standard Guild membership.</td></tr>
+          <tr><td><strong>Recruit</strong></td><td>R1</td><td>New / probation. Limited access to Guild systems until promoted.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>The Authority That Actually Matters</h3>
+      <div class="callout warn">
+        <span class="callout-label">Port War Declaration</span>
+        Only <strong>Chairmen (R5)</strong> and <strong>Executive Managers (R4)</strong> can declare a Port War. This is intentional &mdash; declarations have downstream consequences (timer locks, defense windows, ally retaliation), and the game keeps that power scoped. R3s and below can't accidentally start a war while you're asleep.
+      </div>
+
+      <h3>Titles That Affect Combat</h3>
+      <div class="panel">
+        <p>Two titles in particular shape Battle Day mechanics:</p>
+        <ul>
+          <li><strong>Trader Prince</strong> &mdash; can swap the Garrison Leader of a building (i.e., change the rally-cap fleet) while it's not in combat. Held by one player at a time.</li>
+          <li><strong>Military Counselor</strong> &mdash; same Garrison Leader hot-swap capability. A second slot, lets you double-cover.</li>
+        </ul>
+        <p>Assign these titles <em>before</em> the Battle Day or Port War starts. The standard pattern is to give them to your highest-rally-capacity R4s so they can rotate fresh Garrison Leaders between waves.</p>
+      </div>
+
+      <h3>Recruitment &amp; Retention</h3>
+      <ul>
+        <li><strong>Recruit for activity, not power.</strong> A mid-tier player who shows up every day is worth more than a whale who logs in once a week.</li>
+        <li><strong>Timezone coverage.</strong> A Guild that has at least one active R4 in each major timezone wins more Dominion Battle Days simply because someone is always awake to call.</li>
+        <li><strong>Promote slowly.</strong> R4 permissions include Port War declarations &mdash; one impulsive R4 can wreck a week. Vet before promoting.</li>
+        <li><strong>Have a code of conduct.</strong> Even a simple "join the Discord, follow calls, don't ghost wars" pinned message prevents most internal drama.</li>
+      </ul>
+    </section>
+
+    <!-- XARNAS -->
+    <section class="sub-panel" id="dp-xarnas">
+      <h3 class="no-bar">The Xarnas Trade Prince Competition</h3>
+      <div class="panel">
+        <p>Xarnas is the server-wide political event that runs on a <strong>7-day cycle</strong>: one PVP day to contest the Xarnas position, followed by a buff week for whichever Guild won. The Guild that controls Xarnas earns the <em>Trade Prince</em> title and can issue server-wide decrees that buff every member of their Guild and disadvantage rivals.</p>
+
+        <div class="info-grid">
+          <div class="info-cell">
+            <div class="label">Cycle</div>
+            <div class="value">7 Days</div>
+          </div>
+          <div class="info-cell">
+            <div class="label">Contest</div>
+            <div class="value">1 PVP Day</div>
+          </div>
+          <div class="info-cell">
+            <div class="label">Buff Window</div>
+            <div class="value">6 Days</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>The Trade Prince Decree</h3>
+      <p>Holding Xarnas gives the controlling Guild's Chairman a limited-use server-wide buff system. Decrees can:</p>
+      <ul>
+        <li>Apply server-wide buffs to your Guild (ATK, DEF, resource rates depending on decree type)</li>
+        <li>Apply debuffs or restrictions to opposing Guilds</li>
+        <li>Adjust trade pricing or event modifiers</li>
+      </ul>
+      <p>Recent patch notes increased the number of uses per Decree, and decree cooldowns no longer reset when <em>Paths to Dominance</em> begins on the server &mdash; meaning the Prince can carry decree budget into major events.</p>
+
+      <h3>Strategic Implications</h3>
+      <div class="grid-2">
+        <div class="panel">
+          <h4>If You Win Xarnas</h4>
+          <ul>
+            <li>Stack decrees with major events &mdash; Dominion prep stages, Top 100 windows, Arms Race</li>
+            <li>Use decree budget early so rivals have less time to counter-position</li>
+            <li>Don't burn all decree uses on day 1 &mdash; save some for emergencies (e.g., a contested Port War)</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4>If You Lose Xarnas</h4>
+          <ul>
+            <li>Expect your Guild to be debuff-targeted during the week</li>
+            <li>Plan major spending around the buff-week reset rather than during it</li>
+            <li>Start coordinating your next-week contest <em>this</em> week &mdash; the comms layer matters as much as the fleet</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>The Two-Front Problem</h3>
+      <div class="callout warn">
+        <span class="callout-label">Don't Stretch Your Roster</span>
+        Xarnas PVP day routinely overlaps with Port War cycles. Trying to fight a Port War <em>and</em> contest Xarnas on the same day splits your top players. Decide which front matters more <em>before</em> the conflict, and either commit fully or stand down from one of them. Stretched servers lose both.
+      </div>
+    </section>
+
+    <!-- SERVER POLITICS -->
+    <section class="sub-panel" id="dp-politics">
+      <h3 class="no-bar">Reading the Server Power Map</h3>
+      <div class="panel">
+        <p>Every competitive server has a power map: which Guilds hold Ports, who's allied with whom, who's contesting Xarnas, where the next Port War is likely. Top R5s read this map weekly. Below is the standard framework.</p>
+
+        <h4>The Three Server Archetypes</h4>
+        <ol>
+          <li><strong>One-dominant.</strong> A single Guild controls most Star Ports, the Trade Prince, and dictates the meta. Other Guilds either ally up or accept second-tier. Stable but boring; risk of stagnation.</li>
+          <li><strong>Two-pole.</strong> Two large Guilds compete with smaller allied Guilds orbiting each. The most common state. Port Wars and Xarnas swing weekly.</li>
+          <li><strong>Fractured.</strong> Multiple mid-tier Guilds compete without clear hierarchy. Drama-heavy, low coordination, easy prey for any well-organized smaller Guild that consolidates.</li>
+        </ol>
+      </div>
+
+      <h3>Alliance Types</h3>
+      <table>
+        <thead><tr><th>Pact</th><th>What it means</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>NAP</strong> (Non-Aggression Pact)</td><td>Neither Guild attacks the other's Ports; no active cooperation</td><td>When you'd rather build than fight a specific neighbor</td></tr>
+          <tr><td><strong>Mutual Defense</strong></td><td>Each Guild defends the other if a third party attacks</td><td>To deter a stronger common rival</td></tr>
+          <tr><td><strong>Active Alliance</strong></td><td>Shared Discord, coordinated Port War attacks, role specialization</td><td>For Dominion Warzone and serious Xarnas contests</td></tr>
+          <tr><td><strong>Vassalage</strong></td><td>Smaller Guild defers to larger Guild's strategy in exchange for protection</td><td>When raw size gap makes independence unviable</td></tr>
+          <tr><td><strong>Open Hostility</strong></td><td>No agreement; expect Port attacks any cycle</td><td>When alliance terms can't be reached or you intend to consolidate</td></tr>
+        </tbody>
+      </table>
+
+      <h3>When to Ally vs When to War</h3>
+      <div class="grid-2">
+        <div class="panel">
+          <h4 style="color: var(--green)">Ally When...</h4>
+          <ul>
+            <li>You share a common rival who outpowers either of you alone</li>
+            <li>You'd both benefit from coordinated Dominion / Xarnas pushes</li>
+            <li>The other Guild has timezone coverage you lack (or vice versa)</li>
+            <li>You're geographically adjacent and constant skirmishing burns both Guilds</li>
+            <li>The alliance unlocks Top 100 or Arms Race coordination</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h4 style="color: var(--red)">War When...</h4>
+          <ul>
+            <li>A Port War would meaningfully expand your Star Port count (and you can hold it)</li>
+            <li>An aggressive neighbor refuses reasonable NAP terms</li>
+            <li>You need to break a coalition that's locking your Guild out of Xarnas</li>
+            <li>A rival is materially weaker and consolidation is feasible without burning relationships you'll need later</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout bad">
+        <span class="callout-label">Don't War for Pride</span>
+        Most regrettable wars start because someone got attacked, posted in chat about it, and the Chairman declared retaliation in 30 seconds. Sleep on it. Wars cost resources and burn alliances that take months to rebuild. If your gut says "personal grudge, not strategic gain" &mdash; it's not the time.
+      </div>
+    </section>
+
+    <!-- DIPLOMACY PLAYBOOK -->
+    <section class="sub-panel" id="dp-playbook">
+      <h3 class="no-bar">The Diplomatic Playbook</h3>
+
+      <h3>Building the Inter-Guild Comms Layer</h3>
+      <ol class="steps">
+        <li><strong>Set up a Discord.</strong> Or join an existing one. One server, one strategy channel, one live-calls channel, one map / role-assignment channel.</li>
+        <li><strong>Identify the other R5s.</strong> Reach out personally to the Chairman of every major Guild on your server. Even one in-game message starts the relationship.</li>
+        <li><strong>Pick a server commander.</strong> By consensus from R5s. Their voice carries during Dominion's main contest and major Port Wars.</li>
+        <li><strong>Define role specialization by Guild.</strong> Stronger Guilds run frontline rallies. Mid-tier Guilds run reinforcement. Smaller Guilds run scouting and chip damage. Everyone has a real job.</li>
+        <li><strong>Schedule a practice run.</strong> A coordinated rally onto a low-stakes target before the first major event. Confirms everyone is in comms and understands the call structure.</li>
+      </ol>
+
+      <h3>Handling Conflict</h3>
+      <div class="panel">
+        <h4>De-escalation Sequence</h4>
+        <ol>
+          <li><strong>Identify the actual grievance.</strong> Often it's one player on each side, not the Guild.</li>
+          <li><strong>R5-to-R5 conversation.</strong> Direct message. Not in Guild chat where the public watching forces posturing.</li>
+          <li><strong>Offer a face-saving concession.</strong> A small Port return, a public apology from the offending player, a temporary NAP.</li>
+          <li><strong>If de-escalation fails, define endgame.</strong> Don't drift into open hostility &mdash; commit to a finite goal (e.g., "we'll attack X Port next cycle and stop") so the conflict has a known endpoint.</li>
+        </ol>
+
+        <div class="callout tip">
+          <span class="callout-label">The Long Game</span>
+          Server politics last longer than any single event. The R5 you war with this week may be the partner you need against a stronger common rival next month. Burn relationships sparingly &mdash; you can almost always replay a fight, but you can rarely replay a betrayal.
+        </div>
+      </div>
+
+      <h3>Coordinating With Allies for Dominion</h3>
+      <p>The Dominion Warzone is where inter-Guild coordination pays off most concretely. The standard server-wide playbook:</p>
+      <ul>
+        <li><strong>Pre-event Discord pin:</strong> roles by Guild, target priorities, Energy Core Lv 15+ roster, server commander's contact info.</li>
+        <li><strong>Daily check-in during prep:</strong> who's leading today's Tribute Vessel rallies; who's behind on commission completion; what stage opens tomorrow.</li>
+        <li><strong>Battle Day live calls:</strong> single channel, single commander, structured call format (CALL / LEAD / ETA / NEEDED / WAVE). See the PVP Battle sub-section for the template.</li>
+        <li><strong>Post-event hot wash:</strong> what worked, what didn't, who showed up, who didn't. Critical for retaining alliance trust into the next cycle.</li>
+      </ul>
+
+      <h3>Red Flags to Watch For</h3>
+      <ul class="x-list">
+        <li>An ally Guild that promises Battle Day participation but skips practice runs</li>
+        <li>A neighboring Chairman who only responds to messages when they want something</li>
+        <li>A Guild that publicly trash-talks its own allies in server chat</li>
+        <li>An R5 who declares Port Wars without consulting their Executives</li>
+        <li>An ally that consistently shows up late or under-commits during major events</li>
+        <li>A Guild that breaks NAPs once and gives "miscommunication" as the explanation</li>
+      </ul>
+
+      <div class="callout key">
+        <span class="callout-label">Bottom Line</span>
+        Diplomacy in FGF is unglamorous, slow, and disproportionately impactful. The R5 who builds inter-Guild trust over months wins more big events than the R5 who optimizes their personal Flagship. <strong>The server with working comms wins. The server with three drama-soaked Guilds loses to a coordinated one every single time.</strong>
+      </div>
+    </section>
   </section>
 
   <!-- ===================== TECH ===================== -->
   <section class="tab-panel" id="tech">
     <h2 class="section-title">Tech &amp; Research</h2>
     <p class="section-subtitle">
-      Research tree priorities, tech progression, and which unlocks pay back fastest.
+      The research priority order, why fleet combat always comes first, and how to time speedups for maximum event return. Built from community priority guides and the official patch language.
     </p>
-    <div class="stub-card">
-      <div class="icon">&#x269F;</div>
-      <h3>Section in Development</h3>
-      <p>Coming next: recommended research order for new accounts, tech path comparisons for combat vs trade-focused builds, and timing research with event cycles. Ask me to fill this in whenever you're ready.</p>
-      <div class="stub-tag">Coming Soon</div>
-    </div>
+
+    <nav class="subtabs" id="tech-subtabs">
+      <button class="active" data-sub="tc-overview">Overview</button>
+      <button data-sub="tc-priority">Priority Order</button>
+      <button data-sub="tc-trees">The Five Trees</button>
+      <button data-sub="tc-speedups">Speedup Timing</button>
+      <button data-sub="tc-faqs">FAQs</button>
+    </nav>
+
+    <!-- OVERVIEW -->
+    <section class="sub-panel active" id="tc-overview">
+      <h3 class="no-bar">The Wrong-Tree Problem</h3>
+      <div class="panel">
+        <p>The game does not tell you which research tree matters. Every node visually looks like progress. Three months into an account, the player who researched <em>reactively</em> &mdash; whatever was available, whatever felt productive &mdash; is two tiers behind the player who researched the right tree first, with the same spending and the same time investment.</p>
+        <p>The fix is uncomplicated and front-loaded: <strong>before you spend your first research speedup, commit to a priority order, and stick with it</strong>. Everything else fills in around it.</p>
+      </div>
+
+      <div class="callout key">
+        <span class="callout-label">The Core Principle</span>
+        <strong>Right tree first. Right timing second.</strong> Every speedup spent on the wrong tree is roughly 2x cost &mdash; you spend it once on the wrong node, then later have to spend again to catch up on the right one. Get the order right from the start.
+      </div>
+
+      <h3>What Research Actually Does</h3>
+      <p>FGF research branches across five broad categories. None are useless &mdash; but only some matter for <em>competitive</em> performance:</p>
+      <ul>
+        <li><strong>Fleet Combat</strong> &mdash; flagship ATK, DEF, HP. The performance tree.</li>
+        <li><strong>Flagship Modules / Type-Specific</strong> &mdash; nodes that buff your specific Beam, Ion, or Kinetic kit.</li>
+        <li><strong>Ground Combat</strong> &mdash; champion strike teams (shrines, daily missions).</li>
+        <li><strong>Development</strong> &mdash; build speed, base infrastructure, gating unlocks.</li>
+        <li><strong>Economy</strong> &mdash; Credit generation, resource efficiency.</li>
+      </ul>
+      <p>The first two decide your competitive fate. The third feeds your daily activity floor. The last two fill in once those are humming.</p>
+    </section>
+
+    <!-- PRIORITY ORDER -->
+    <section class="sub-panel" id="tc-priority">
+      <h3 class="no-bar">Research Priority by Tier</h3>
+      <p>The priority order that prevents the wrong-tree problem. Hit the first tier hard before touching the next.</p>
+
+      <div class="panel" style="border-left: 4px solid var(--red)">
+        <h4 style="color: var(--red); margin-top: 0">Tier 1 &mdash; Fleet Combat Nodes (always first)</h4>
+        <p>The fleet combat research tree is the highest-priority path in the game. Every node increases your Flagship's combat performance and translates directly into Port War wins, GVG results, and Dominion Battle Day performance.</p>
+        <p><strong>Order within fleet combat:</strong></p>
+        <ol>
+          <li><strong>ATK nodes</strong> &mdash; scale every hit, also scale Ajita's healing (Ion) and Evan Rogers' formation buff (Beam) effectiveness</li>
+          <li><strong>DEF nodes</strong> &mdash; reduce incoming damage; matters most in extended engagements</li>
+          <li><strong>HP nodes</strong> &mdash; durability; extends how long your formation survives</li>
+        </ol>
+        <p>Damage output is the multiplier. DEF and HP keep you in the fight long enough to apply that multiplier. ATK first, always.</p>
+      </div>
+
+      <div class="panel" style="border-left: 4px solid var(--amber)">
+        <h4 style="color: var(--amber); margin-top: 0">Tier 2 &mdash; Flagship Type-Specific Research</h4>
+        <p>After universal fleet combat nodes, move to research that buffs your <em>specific</em> flagship type (Beam, Ion, or Kinetic). A Beam-specific ATK node delivers more value to a Beam flagship than a universal ATK node at the same tier.</p>
+
+        <div class="callout warn">
+          <span class="callout-label">Critical Gate</span>
+          Type-specific research does <strong>not</strong> transfer if you switch flagship types. Confirm your Flagship type before investing here. See the Fleet &amp; Combat section for type selection.
+        </div>
+      </div>
+
+      <div class="panel" style="border-left: 4px solid var(--cyan)">
+        <h4 style="color: var(--cyan); margin-top: 0">Tier 3 &mdash; Ground Combat Research</h4>
+        <p>Ground combat governs your champion strike teams &mdash; the three-hero formation handling shrines, daily missions, and ground-based content. Two reasons it matters:</p>
+        <ul>
+          <li>Shrine kills are your primary source of <strong>Guild Vouchers</strong> and daily mission rewards</li>
+          <li>Ground combat champion performance scales with research nodes as well as champion investment &mdash; under-researched ground combat costs daily activity returns every single day</li>
+        </ul>
+        <p>Ground combat doesn't need to keep pace with fleet combat dollar-for-dollar. But neglecting it entirely creates a daily-activity gap that compounds across months.</p>
+      </div>
+
+      <div class="panel" style="border-left: 4px solid var(--green)">
+        <h4 style="color: var(--green); margin-top: 0">Tier 4 &mdash; Development &amp; Economy</h4>
+        <p>These trees aren't useless &mdash; but they're not what wins events.</p>
+        <ul>
+          <li><strong>Development</strong> &mdash; prioritize <em>only</em> when a node is actively blocking a unlock you need (e.g., higher-tier flagship modules, more Guild Ports). Otherwise, defer.</li>
+          <li><strong>Economy</strong> &mdash; passive Credit generation and resource efficiency. Meaningful for F2P, negligible for spenders. Lowest priority on a competitive account.</li>
+        </ul>
+      </div>
+
+      <h3>Visual Summary</h3>
+      <table>
+        <thead><tr><th>Tier</th><th>Tree</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color: var(--red)">1</strong></td><td>Fleet Combat (ATK &rarr; DEF &rarr; HP)</td><td>Directly decides GVG, Port War, and Dominion Battle Day output</td></tr>
+          <tr><td><strong style="color: var(--amber)">2</strong></td><td>Flagship Type-Specific</td><td>Bonus value per node compared to universal nodes</td></tr>
+          <tr><td><strong style="color: var(--cyan)">3</strong></td><td>Ground Combat</td><td>Daily Voucher and mission floor &mdash; compounds</td></tr>
+          <tr><td><strong style="color: var(--green)">4</strong></td><td>Development</td><td>Only when blocking a needed unlock</td></tr>
+          <tr><td><strong style="color: var(--text-mute)">5</strong></td><td>Economy</td><td>Lowest priority at competitive spend levels</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout key">
+        <span class="callout-label">The Front-Loaded Fix</span>
+        Before spending your first research speedup, <strong>map the fleet combat path to its highest available tier</strong> and commit to not leaving that path until it's maxed. Everything else fills in around it. This single decision saves months of catch-up research.
+      </div>
+    </section>
+
+    <!-- THE FIVE TREES -->
+    <section class="sub-panel" id="tc-trees">
+      <h3 class="no-bar">The Five Research Trees in Detail</h3>
+
+      <h3>Fleet Combat</h3>
+      <div class="panel">
+        <p>The most important tree in the game. Universal nodes that apply to your Flagship regardless of type. Three sub-paths:</p>
+        <table>
+          <thead><tr><th>Path</th><th>What it scales</th><th>Priority</th></tr></thead>
+          <tbody>
+            <tr><td><strong>ATK</strong></td><td>Damage output, hero ability damage, healing-via-ATK (Ajita)</td><td style="color: var(--red)">First</td></tr>
+            <tr><td><strong>DEF</strong></td><td>Incoming damage reduction</td><td style="color: var(--amber)">Second</td></tr>
+            <tr><td><strong>HP</strong></td><td>Flagship survivability</td><td style="color: var(--cyan)">Third</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Time to max:</strong> Several months at consistent spend with speedups timed to event windows. Plan accordingly &mdash; this is a long-haul investment, not a sprint.</p>
+      </div>
+
+      <h3>Flagship Type-Specific (Modules)</h3>
+      <div class="panel">
+        <p>Tied to your specific Energy Type:</p>
+        <ul>
+          <li><strong>Beam research</strong> &mdash; buffs Beam flagship base stats, Beam ability damage</li>
+          <li><strong>Ionic research</strong> &mdash; buffs Ionic flagship debuff effectiveness, control depth</li>
+          <li><strong>Kinetic research</strong> &mdash; buffs Kinetic flagship burst damage, auto-raid efficiency</li>
+        </ul>
+        <p>Each tier of type-specific research is meaningfully stronger than the equivalent universal node for that type's flagship. But the nodes <em>do not transfer</em> if you switch types &mdash; lock your Flagship type first.</p>
+      </div>
+
+      <h3>Ground Combat</h3>
+      <div class="panel">
+        <p>Buffs your three-hero champion strike team performance. The team that runs shrines, daily missions, landing missions, and other ground-based content.</p>
+        <h4>Why It's Worth Researching</h4>
+        <ul>
+          <li>Shrine kill efficiency = Guild Vouchers + daily mission rewards</li>
+          <li>Ground combat ATK and HP nodes are routinely <em>under-researched</em> by players focused on fleet combat &mdash; under-investing here gives up daily compound returns</li>
+          <li>Landing missions during major events draw on this tree, not the fleet tree</li>
+        </ul>
+      </div>
+
+      <h3>Development</h3>
+      <div class="panel">
+        <p>Governs base construction speed, resource production rates, and (most importantly) Core progression gating. Some development nodes <em>gate access</em> to higher-tier base functions you need to unlock specific flagship module tiers.</p>
+        <p><strong>Rule:</strong> Research development nodes <em>only</em> when one is blocking a progression unlock you actually need. Don't chase the tree for its own sake.</p>
+      </div>
+
+      <h3>Economy</h3>
+      <div class="panel">
+        <p>Passive Credit generation and resource efficiency. At spend levels above F2P, the speed improvement is negligible &mdash; your main resource bottleneck is premium consumable timing (Dominion stages, anchor Champion rotations), not passive flow. <strong>Last priority.</strong></p>
+      </div>
+    </section>
+
+    <!-- SPEEDUP TIMING -->
+    <section class="sub-panel" id="tc-speedups">
+      <h3 class="no-bar">Research Speedups &mdash; When to Burn</h3>
+      <div class="panel">
+        <p>Research speedups are the most valuable speedup type in FGF because <strong>research completions score efficiently in Top 100 Galactic Traders and Arms Race</strong>. Burning them passively between events is the compounded version of the wrong-tree mistake: wrong priority <em>and</em> wrong timing simultaneously.</p>
+      </div>
+
+      <h3>The Speedup Discipline</h3>
+      <ol class="steps">
+        <li><strong>Don't burn passively.</strong> Between events, queue research and let it tick naturally. Bank your speedup reserve.</li>
+        <li><strong>Identify the next major event.</strong> Top 100 Galactic Traders, Arms Race, Dominion Warzone Stage 3 (the Technology &amp; Crew day) all reward research completions.</li>
+        <li><strong>Burn during the event window only.</strong> Speedups used during a scoring window produce both <em>permanent advancement</em> and <em>event points</em> &mdash; double return.</li>
+        <li><strong>Match Dominion Stage 3 specifically.</strong> Every minute of Technology Speedup is worth +16 points during that stage. The same minute used the day before is worth 0.</li>
+        <li><strong>Hold a reserve.</strong> Keep at least 25% of your speedup bank uncommitted between events &mdash; sudden Top 100 windows or surprise Arms Race weekends can pay out unexpectedly well.</li>
+      </ol>
+
+      <h3>Speedup Pack Hoarding</h3>
+      <div class="panel">
+        <p>The standard discipline at competitive spend levels:</p>
+        <ul>
+          <li>Universal speedup bundles &mdash; banked, used during events that score completions</li>
+          <li>Research-specific speedup packs &mdash; banked, used <em>only</em> for fleet combat research during scoring windows</li>
+          <li>Build speedups &mdash; less event-impactful; can be burned more freely on progression unlocks</li>
+        </ul>
+
+        <div class="callout warn">
+          <span class="callout-label">The Reactive Trap</span>
+          The most common mistake: a research node finishes, the game prompts "Speed up next?", the player taps yes out of momentum. That habit alone is the difference between Top 100 placement and missing the cutoff. Set the personal rule: speedups only during scoring events.
+        </div>
+      </div>
+
+      <h3>Event Window Alignment</h3>
+      <table>
+        <thead><tr><th>Event</th><th>What it rewards</th><th>Burn order</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Top 100 Galactic Traders</strong></td><td>Research completions, build completions, champion advancement</td><td>Research speedups + matching consumables</td></tr>
+          <tr><td><strong>Arms Race</strong></td><td>Progression milestones across multiple tracks</td><td>Universal speedups, research-specific</td></tr>
+          <tr><td><strong>Dominion Stage 3 (Tech &amp; Crew)</strong></td><td>Tech speedups &mdash; +16 per minute</td><td>Every minute of stockpiled Tech Speedups</td></tr>
+          <tr><td><strong>Off-event</strong></td><td>Permanent advancement only</td><td>Natural research queue; bank speedups</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- FAQs -->
+    <section class="sub-panel" id="tc-faqs">
+      <h3 class="no-bar">Common Questions</h3>
+
+      <div class="panel">
+        <h4>Does research reset if I switch Flagship types?</h4>
+        <p>General fleet combat research carries over regardless of type. <strong>Flagship type-specific research nodes do not</strong> &mdash; they're tied to the type you researched them for. This is the strongest reason to lock your Flagship type before committing to type-specific paths.</p>
+      </div>
+
+      <div class="panel">
+        <h4>How long does the fleet combat tree take to max?</h4>
+        <p>Depth varies by server age and update cycle. At consistent spending with research speedups timed to event windows, expect the <strong>primary fleet combat path to take multiple months</strong> to fully advance. Planning speedup staging around Top 100 and Arms Race windows accelerates effective progress versus passive research alone by a meaningful margin.</p>
+      </div>
+
+      <div class="panel">
+        <h4>Is there a node that's commonly overlooked but high-value?</h4>
+        <p><strong>Ground combat ATK and HP nodes.</strong> Players who hyper-focus on fleet combat routinely under-research these, losing daily shrine-kill efficiency and mission returns that compound across months. They're not a priority over fleet combat, but neglecting them entirely is a quiet long-term cost.</p>
+      </div>
+
+      <div class="panel">
+        <h4>Do research completions always score in Top 100?</h4>
+        <p>Yes &mdash; this is the primary reason to hoard research speedups for event windows rather than burning them passively between events. Top 100 Galactic Traders rewards completions, not just queued research.</p>
+      </div>
+
+      <div class="panel">
+        <h4>I joined a server late &mdash; can I catch up on research?</h4>
+        <p>Catch-up is real but slow. Two levers help:</p>
+        <ul>
+          <li><strong>Don't research reactively.</strong> Skip the temptation to fill out development/economy &mdash; route all speedups into fleet combat ATK first.</li>
+          <li><strong>Hit every event scoring window.</strong> Even if you're behind, an event-aligned speedup burn closes the gap faster than equivalent passive progression.</li>
+        </ul>
+        <p>What doesn't help: spreading speedups across multiple trees to look "balanced." That's the wrong-tree problem in slow motion.</p>
+      </div>
+
+      <div class="panel">
+        <h4>What's the single biggest research mistake?</h4>
+        <p>Going deep into <strong>development or economy nodes</strong> in the first few weeks because they're available and the completion feedback feels productive. Three months later, the player has a competitive flagship formation but fleet combat research two tiers behind a server peer who spent the same money but prioritized differently. The power gap is real and closing it requires burning speedups into catch-up research rather than forward progress.</p>
+      </div>
+
+      <div class="callout key">
+        <span class="callout-label">The One-Line Version</span>
+        <strong>ATK in fleet combat, then DEF, then HP. Then your Flagship type's specific nodes. Then ground combat. Then development only when it's blocking something. Economy last.</strong> Speedups stay banked until an event scores them.
+      </div>
+    </section>
   </section>
 
   <footer class="site">
@@ -1697,15 +2803,18 @@ We win by coordination, not chaos. Follow calls, save resources, and be ready.</
     });
   });
 
-  // Sub-tab navigation within Dominion War
-  const subtabs = document.querySelectorAll('#dw-subtabs button');
-  const subpanels = document.querySelectorAll('section.sub-panel');
-  subtabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.sub;
-      subtabs.forEach(b => b.classList.toggle('active', b === btn));
-      subpanels.forEach(p => p.classList.toggle('active', p.id === id));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Sub-tab navigation (scoped per parent section)
+  document.querySelectorAll('nav.subtabs').forEach(nav => {
+    const buttons = nav.querySelectorAll('button');
+    const parent = nav.closest('section.tab-panel');
+    const panels = parent ? parent.querySelectorAll('section.sub-panel') : [];
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.sub;
+        buttons.forEach(b => b.classList.toggle('active', b === btn));
+        panels.forEach(p => p.classList.toggle('active', p.id === id));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     });
   });
 
