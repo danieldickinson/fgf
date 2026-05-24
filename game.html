@@ -454,6 +454,103 @@
   .flash-ok { background: rgba(42, 157, 143, 0.2) !important; }
   .flash-err { background: rgba(230, 57, 70, 0.2) !important; }
 
+  /* ---------- TIMER + PHASE ---------- */
+  .phase-bar {
+    width: 100%;
+    background: var(--bg-2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-left: 5px solid var(--accent);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .phase-bar.phase-reading { border-left-color: var(--accent); }
+  .phase-bar.phase-buzzing { border-left-color: var(--gold); animation: gentlePulse 1s infinite; }
+  .phase-bar.phase-answering { border-left-color: var(--ok); }
+  .phase-bar.phase-oppAnswering { border-left-color: var(--text-dim); }
+  .phase-bar.phase-revealed { border-left-color: var(--err); }
+  @keyframes gentlePulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(245, 197, 24, 0); }
+    50% { box-shadow: 0 0 20px rgba(245, 197, 24, 0.4); }
+  }
+  .phase-label {
+    font-size: 14px;
+    color: var(--text);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .phase-timer {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    min-width: 48px;
+    text-align: right;
+  }
+  .phase-timer.warn { color: #ff9a3d; }
+  .phase-timer.danger { color: #ff4d4d; animation: tick 1s infinite; }
+  @keyframes tick {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .big-timer {
+    font-size: 72px;
+    font-weight: bold;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 4px 16px rgba(245, 197, 24, 0.4);
+    min-width: 90px;
+    text-align: center;
+  }
+  .big-timer.warn { color: #ff9a3d; text-shadow: 0 4px 16px rgba(255, 154, 61, 0.4); }
+  .big-timer.danger { color: #ff4d4d; text-shadow: 0 4px 16px rgba(255, 77, 77, 0.6); animation: tick 1s infinite; }
+  .phase-pill {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: bold;
+    background: var(--accent);
+    color: white;
+  }
+  .phase-pill.phase-buzzing { background: var(--gold); color: var(--bg-1); }
+  .phase-pill.phase-answering { background: var(--ok); }
+  .phase-pill.phase-oppAnswering { background: var(--text-dim); color: var(--bg-1); }
+  .phase-pill.phase-revealed { background: var(--err); }
+
+  .buzz-btn {
+    background: var(--gold);
+    color: var(--bg-1);
+    border: none;
+    border-radius: 14px;
+    padding: 28px;
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    font-family: inherit;
+    box-shadow: 0 6px 20px rgba(245, 197, 24, 0.4);
+    transition: transform 0.08s;
+  }
+  .buzz-btn:active:not(:disabled) { transform: scale(0.96); }
+  .buzz-btn:disabled {
+    background: var(--bg-2);
+    color: var(--text-dim);
+    box-shadow: none;
+    border: 2px dashed var(--text-dim);
+    cursor: not-allowed;
+  }
+  .buzz-btn.buzzed-by-me { background: var(--ok); color: white; }
+  .buzz-btn.buzzed-by-opp { background: var(--bg-2); color: var(--text-dim); border: 2px solid var(--text-dim); }
+
   @media (max-width: 700px) {
     .lobby-cols { gap: 24px; }
     .qr-box img { width: 200px; height: 200px; }
@@ -550,7 +647,11 @@
       </div>
       <div class="q-text" id="hq-text"></div>
       <div class="choices-grid" id="hq-choices"></div>
-      <div class="status-line" id="hq-status">Players: tap your answer!</div>
+      <div style="display: flex; align-items: center; gap: 24px; justify-content: center;">
+        <span class="phase-pill" id="hq-phase-pill">Reading</span>
+        <div class="big-timer" id="hq-big-timer">15</div>
+      </div>
+      <div class="status-line" id="hq-status">Read the question — buzzing opens soon.</div>
     </div>
 
     <!-- HOST: Final -->
@@ -638,8 +739,13 @@
           <span class="q-tag" id="pq-meta"></span>
           <span id="pq-text"></span>
         </div>
+        <div class="phase-bar phase-reading" id="pq-phase-bar">
+          <span class="phase-label" id="pq-phase-label">Read the question…</span>
+          <span class="phase-timer" id="pq-phase-timer">15</span>
+        </div>
+        <button class="buzz-btn" id="pq-buzz-btn" disabled>🔔 BUZZ IN</button>
         <div class="player-choices" id="pq-choices"></div>
-        <p style="font-size: 13px; color: var(--text-dim);" id="pq-hint">Tap fast — first correct answer wins the points!</p>
+        <p style="font-size: 13px; color: var(--text-dim);" id="pq-hint">Read carefully — buzz-in opens in 15 seconds.</p>
       </div>
 
       <!-- PLAYER: Final wager -->
@@ -984,6 +1090,10 @@ function handlePlayerMessage(host, slot, data) {
       openQuestionHost(host, data.catKey, data.value);
       break;
     }
+    case 'buzz': {
+      handleBuzz(host, slot);
+      break;
+    }
     case 'answer': {
       handleAnswer(host, slot, data.choiceIdx);
       break;
@@ -1096,14 +1206,72 @@ function broadcastBoard(host) {
   broadcastPlayerContext(host);
 }
 
+// ---------- Timing constants ----------
+const READ_MS = 15000;
+const BUZZ_WINDOW_MS = 15000;  // how long buzz window stays open if nobody buzzes
+const ANSWER_MS = 10000;
+
+// ---------- Host timer helpers ----------
+function clearPhaseTimer(host) {
+  if (host.current && host.current.phaseTimer) {
+    clearTimeout(host.current.phaseTimer);
+    host.current.phaseTimer = null;
+  }
+  if (host.current && host.current.uiTickInterval) {
+    clearInterval(host.current.uiTickInterval);
+    host.current.uiTickInterval = null;
+  }
+}
+
+function setHostPhase(host, phase, duration, onTimeout) {
+  if (!host.current) return;
+  clearPhaseTimer(host);
+  host.current.phase = phase;
+  host.current.phaseEndsAt = Date.now() + duration;
+  if (onTimeout) host.current.phaseTimer = setTimeout(onTimeout, duration);
+  renderHostPhaseUI(host);
+  host.current.uiTickInterval = setInterval(() => renderHostPhaseUI(host), 200);
+}
+
+function renderHostPhaseUI(host) {
+  if (!host.current) return;
+  const remainingMs = Math.max(0, (host.current.phaseEndsAt || 0) - Date.now());
+  const secs = Math.ceil(remainingMs / 1000);
+  const phase = host.current.phase;
+  const pill = $('hq-phase-pill');
+  const timer = $('hq-big-timer');
+
+  // Phase pill text + class
+  pill.className = `phase-pill phase-${phase}`;
+  const pillText = ({
+    reading: 'Reading',
+    buzzing: 'Buzz In!',
+    answering: 'Answering',
+    oppAnswering: 'Opponent Answering',
+    revealed: 'Answer'
+  })[phase] || phase;
+  pill.textContent = pillText;
+
+  // Timer
+  timer.textContent = phase === 'revealed' ? '' : secs;
+  timer.className = 'big-timer';
+  if (phase !== 'revealed') {
+    if (secs <= 3) timer.classList.add('danger');
+    else if (secs <= 6) timer.classList.add('warn');
+  }
+}
+
 function openQuestionHost(host, catKey, value) {
   const roundKey = host.round === 1 ? 'round1' : 'round2';
   const cat = QUESTIONS[roundKey][catKey];
   const tile = cat.tiers[value];
   const { shuffled, indexMap } = shuffleWithIndex(tile.choices);
-  // The correct answer was index 0 in the original; find its new position
   const correctNewIdx = indexMap.indexOf(0);
-  host.current = { catKey, value, cat, tile, shuffled, correctNewIdx };
+  host.current = {
+    catKey, value, cat, tile, shuffled, correctNewIdx,
+    phase: null, buzzer: null, phaseTimer: null, phaseEndsAt: 0,
+    uiTickInterval: null, hasBuzzed: false
+  };
   host.lockedOut.clear();
 
   Snd.click();
@@ -1112,9 +1280,9 @@ function openQuestionHost(host, catKey, value) {
   $('hq-val').textContent = `$${value}`;
   $('hq-text').textContent = tile.q;
   renderHostChoices('hq-choices', shuffled, null, null);
-  $('hq-status').innerHTML = `Both players: tap your answer!`;
+  $('hq-status').innerHTML = `Read carefully — buzzing opens in ${READ_MS / 1000}s.`;
 
-  // Send question to both players
+  // Send question to both players with reading phase
   for (const slot of [1, 2]) {
     const p = host.players[slot];
     if (!p.conn) continue;
@@ -1124,9 +1292,106 @@ function openQuestionHost(host, catKey, value) {
       value,
       q: tile.q,
       choices: shuffled,
-      isFinal: false
+      isFinal: false,
+      phase: 'reading',
+      duration: READ_MS
     });
   }
+
+  setHostPhase(host, 'reading', READ_MS, () => enterBuzzPhase(host));
+}
+
+function enterBuzzPhase(host) {
+  if (!host.current) return;
+  Snd.roundChange();
+  $('hq-status').innerHTML = `🔔 Buzz in! First to tap their BUZZ button gets to answer.`;
+  for (const slot of [1, 2]) {
+    const p = host.players[slot];
+    if (!p.conn) continue;
+    p.conn.send({ type: 'phase', phase: 'buzzing', duration: BUZZ_WINDOW_MS });
+  }
+  setHostPhase(host, 'buzzing', BUZZ_WINDOW_MS, () => buzzTimeout(host));
+}
+
+function buzzTimeout(host) {
+  if (!host.current || host.current.phase !== 'buzzing') return;
+  // Nobody buzzed — reveal, no penalty
+  Snd.wrong();
+  const correctIdx = host.current.correctNewIdx;
+  renderHostChoices('hq-choices', host.current.shuffled, null, correctIdx);
+  $('hq-status').innerHTML = `No buzz — correct answer revealed. No points awarded.`;
+  setHostPhase(host, 'revealed', 0, null);
+  for (const slot of [1, 2]) {
+    const p = host.players[slot];
+    if (!p.conn) continue;
+    p.conn.send({
+      type: 'questionResult',
+      result: 'noBuzz',
+      correctIdx,
+      value: 0
+    });
+  }
+  setTimeout(() => finishTile(host), 3000);
+}
+
+function handleBuzz(host, slot) {
+  if (!host.current || host.current.phase !== 'buzzing') return;
+  if (host.current.hasBuzzed) return;          // first-wins
+  if (host.lockedOut.has(slot)) return;
+  host.current.hasBuzzed = true;
+  host.current.buzzer = slot;
+  Snd.buzz();
+  enterAnswerPhase(host, slot);
+}
+
+function enterAnswerPhase(host, answererSlot) {
+  if (!host.current) return;
+  const name = host.players[answererSlot].name;
+  $('hq-status').innerHTML = `<b class="p${answererSlot}">${name}</b> buzzed in — ${ANSWER_MS / 1000}s to answer.`;
+  for (const slot of [1, 2]) {
+    const p = host.players[slot];
+    if (!p.conn) continue;
+    p.conn.send({
+      type: 'phase',
+      phase: 'answering',
+      duration: ANSWER_MS,
+      answerer: answererSlot
+    });
+  }
+  setHostPhase(host, 'answering', ANSWER_MS, () => answerTimeout(host));
+}
+
+function answerTimeout(host) {
+  if (!host.current) return;
+  // Buzzer didn't answer in time — treat as wrong
+  const slot = host.current.buzzer;
+  if (slot === null || slot === undefined) return;
+  resolveAnswerWrong(host, slot, null, true);
+}
+
+function enterOppAnswerPhase(host, oppSlot, originalWrongerSlot, originalWrongChoice) {
+  // Opponent gets 10s to answer (no buzz race needed — first wrong already happened)
+  host.current.buzzer = oppSlot;
+  const oppName = host.players[oppSlot].name;
+  const lockedMap = {};
+  if (originalWrongChoice !== null && originalWrongChoice !== undefined) {
+    lockedMap[originalWrongChoice] = originalWrongerSlot;
+  }
+  renderHostChoices('hq-choices', host.current.shuffled, lockedMap, null);
+  $('hq-status').innerHTML = `<b class="p${oppSlot}">${oppName}</b> can steal — ${ANSWER_MS / 1000}s to answer.`;
+  for (const slot of [1, 2]) {
+    const p = host.players[slot];
+    if (!p.conn) continue;
+    p.conn.send({
+      type: 'phase',
+      phase: 'oppAnswering',
+      duration: ANSWER_MS,
+      answerer: oppSlot,
+      wrongChoice: originalWrongChoice,
+      wrongerSlot: originalWrongerSlot
+    });
+  }
+  setHostPhase(host, 'oppAnswering', ANSWER_MS, () => answerTimeout(host));
 }
 
 function renderHostChoices(containerId, choices, lockedByMap, revealCorrectIdx) {
@@ -1151,85 +1416,105 @@ function renderHostChoices(containerId, choices, lockedByMap, revealCorrectIdx) 
 
 function handleAnswer(host, slot, choiceIdx) {
   if (!host.current) return;
-  if (host.lockedOut.has(slot)) return;
-  // First-wins: the act of receiving the message is the buzz-in
+  // Final-question case handled elsewhere
+  if (host.current.isFinal) return;
+  // Must be in an answering phase, and must be the player who has the floor
+  const validPhase = host.current.phase === 'answering' || host.current.phase === 'oppAnswering';
+  if (!validPhase) return;
+  if (host.current.buzzer !== slot) return;
+
+  clearPhaseTimer(host);
   const correct = (choiceIdx === host.current.correctNewIdx);
+  if (correct) resolveAnswerCorrect(host, slot, choiceIdx);
+  else resolveAnswerWrong(host, slot, choiceIdx, false);
+}
+
+function resolveAnswerCorrect(host, slot, choiceIdx) {
   const value = host.current.value;
   const player = host.players[slot];
+  Snd.correct();
+  player.score += value;
+  host.picker = slot;
 
-  if (correct) {
-    Snd.correct();
-    player.score += value;
-    host.picker = slot;
-    // Reveal answer on host
-    const lockedMap = {}; lockedMap[choiceIdx] = slot;
+  const lockedMap = {}; lockedMap[choiceIdx] = slot;
+  renderHostChoices('hq-choices', host.current.shuffled, lockedMap, host.current.correctNewIdx);
+  setHostPhase(host, 'revealed', 0, null);
+  $('hq-status').innerHTML = `<b class="p${slot}">${player.name}</b> got it! +${formatMoney(value)}`;
+
+  for (const s of [1, 2]) {
+    const p = host.players[s];
+    if (!p.conn) continue;
+    p.conn.send({
+      type: 'questionResult',
+      result: s === slot ? 'youCorrect' : 'oppCorrect',
+      correctIdx: host.current.correctNewIdx,
+      winner: player.name,
+      value
+    });
+  }
+  updateScores(host);
+  setTimeout(() => finishTile(host), 2400);
+}
+
+function resolveAnswerWrong(host, slot, choiceIdx, timedOut) {
+  const value = host.current.value;
+  const player = host.players[slot];
+  Snd.wrong();
+  player.score -= value;
+  host.lockedOut.add(slot);
+  updateScores(host);
+  broadcastPlayerContext(host);
+
+  const oppSlot = slot === 1 ? 2 : 1;
+  const oppConnected = !!host.players[oppSlot].conn;
+  const oppLockedOut = host.lockedOut.has(oppSlot);
+
+  // Tell the wronger
+  if (player.conn) {
+    player.conn.send({
+      type: 'questionResult',
+      result: 'youWrong',
+      yourChoice: choiceIdx,
+      timedOut,
+      value
+    });
+  }
+
+  if (!oppConnected || oppLockedOut) {
+    // No steal possible — reveal and move on
+    const lockedMap = {};
+    if (choiceIdx !== null && choiceIdx !== undefined) lockedMap[choiceIdx] = slot;
     renderHostChoices('hq-choices', host.current.shuffled, lockedMap, host.current.correctNewIdx);
-    $('hq-status').innerHTML = `<b class="p${slot}">${player.name}</b> got it! +${formatMoney(value)}`;
-    // Notify both players of result
-    for (const s of [1, 2]) {
-      const p = host.players[s];
-      if (!p.conn) continue;
-      p.conn.send({
+    setHostPhase(host, 'revealed', 0, null);
+    $('hq-status').innerHTML = timedOut
+      ? `Time's up! Correct answer revealed.`
+      : `Wrong! Correct answer revealed.`;
+    if (host.players[oppSlot].conn) {
+      host.players[oppSlot].conn.send({
         type: 'questionResult',
-        result: s === slot ? 'youCorrect' : 'oppCorrect',
+        result: 'allDone',
         correctIdx: host.current.correctNewIdx,
-        winner: player.name,
-        value
+        value: 0
       });
     }
-    updateScores(host);
-    setTimeout(() => finishTile(host), 2400);
+    setTimeout(() => finishTile(host), 2800);
   } else {
-    Snd.wrong();
-    player.score -= value;
-    host.lockedOut.add(slot);
-    const lockedMap = {}; lockedMap[choiceIdx] = slot;
-    // Are both players locked out now?
-    if (host.lockedOut.size >= 2 || !host.players[slot === 1 ? 2 : 1].conn) {
-      // No one else to answer — reveal and move on
-      renderHostChoices('hq-choices', host.current.shuffled, lockedMap, host.current.correctNewIdx);
-      $('hq-status').innerHTML = `Both wrong! Correct answer revealed.`;
-      // Whoever picked last keeps picking (or default to current)
-      for (const s of [1, 2]) {
-        const p = host.players[s];
-        if (!p.conn) continue;
-        p.conn.send({
-          type: 'questionResult',
-          result: s === slot ? 'youWrong' : 'oppWrong',
-          correctIdx: host.current.correctNewIdx,
-          winner: null,
-          value: 0
-        });
-      }
-      updateScores(host);
-      setTimeout(() => finishTile(host), 2800);
-    } else {
-      // Player got it wrong but opponent still has a chance
-      renderHostChoices('hq-choices', host.current.shuffled, lockedMap, null);
-      const oppSlot = slot === 1 ? 2 : 1;
-      const oppName = host.players[oppSlot].name;
-      $('hq-status').innerHTML = `<b class="p${slot}">${player.name}</b> wrong! -${formatMoney(value)}. <b class="p${oppSlot}">${oppName}</b> can still answer.`;
-      // Notify each player
-      player.conn && player.conn.send({
+    // Opponent gets a 10s steal window
+    if (host.players[oppSlot].conn) {
+      host.players[oppSlot].conn.send({
         type: 'questionResult',
-        result: 'youWrongOppCan',
-        yourChoice: choiceIdx,
-        value
-      });
-      host.players[oppSlot].conn && host.players[oppSlot].conn.send({
-        type: 'questionResult',
-        result: 'oppWrongYouCan',
+        result: 'oppWrong',
         oppChoice: choiceIdx,
         value
       });
-      updateScores(host);
-      broadcastPlayerContext(host);
     }
+    enterOppAnswerPhase(host, oppSlot, slot, choiceIdx);
   }
 }
 
 function finishTile(host) {
   if (!host.current) return;
+  clearPhaseTimer(host);
   const id = `${host.round}-${host.current.catKey}-${host.current.value}`;
   host.usedTiles.add(id);
   host.current = null;
@@ -1472,6 +1757,60 @@ function initPlayer(roomId) {
     player.conn.send({ type: 'finalWager', amount });
     showPlayerScreen('p-wager-wait');
   });
+
+  // Buzz button (active only during buzzing phase)
+  $('pq-buzz-btn').addEventListener('click', () => {
+    if (player.phase !== 'buzzing') return;
+    if (player.hasBuzzed) return;
+    player.hasBuzzed = true;
+    $('pq-buzz-btn').disabled = true;
+    $('pq-buzz-btn').classList.add('buzzed-by-me');
+    $('pq-buzz-btn').textContent = '🔔 BUZZED!';
+    player.conn.send({ type: 'buzz' });
+  });
+}
+
+// ---------- Player countdown loop ----------
+function startPlayerCountdown(player) {
+  stopPlayerCountdown(player);
+  player.tickInterval = setInterval(() => renderPlayerPhase(player), 200);
+  renderPlayerPhase(player);
+}
+function stopPlayerCountdown(player) {
+  if (player.tickInterval) { clearInterval(player.tickInterval); player.tickInterval = null; }
+}
+function renderPlayerPhase(player) {
+  if (!player.phase || !player.phaseEndsAt) return;
+  const remainingMs = Math.max(0, player.phaseEndsAt - Date.now());
+  const secs = Math.ceil(remainingMs / 1000);
+  const bar = $('pq-phase-bar');
+  const label = $('pq-phase-label');
+  const timer = $('pq-phase-timer');
+  bar.className = `phase-bar phase-${player.phase}`;
+  timer.className = 'phase-timer';
+  if (player.phase !== 'revealed') {
+    if (secs <= 3) timer.classList.add('danger');
+    else if (secs <= 6) timer.classList.add('warn');
+  }
+  timer.textContent = player.phase === 'revealed' ? '' : secs;
+
+  switch (player.phase) {
+    case 'reading':
+      label.textContent = 'Read the question…';
+      break;
+    case 'buzzing':
+      label.textContent = player.hasBuzzed ? 'Waiting for opponent…' : '🔔 Buzz in!';
+      break;
+    case 'answering':
+      label.textContent = player.amAnswerer ? 'Your turn — answer!' : 'Opponent answering…';
+      break;
+    case 'oppAnswering':
+      label.textContent = player.amAnswerer ? 'Steal — your turn!' : 'Opponent stealing…';
+      break;
+    case 'revealed':
+      label.textContent = 'Answer revealed';
+      break;
+  }
 }
 
 function showPlayerScreen(id) {
@@ -1517,6 +1856,9 @@ function handleHostMessage(player, data) {
       break;
     case 'question':
       renderPlayerQuestion(player, data);
+      break;
+    case 'phase':
+      applyPlayerPhase(player, data);
       break;
     case 'questionResult':
       handlePlayerQuestionResult(player, data);
@@ -1597,11 +1939,13 @@ function renderPlayerQuestion(player, data) {
     ? `Final Wager — ${data.cat}`
     : `${data.cat} — ${formatMoney(data.value)}`;
   $('pq-text').textContent = data.q;
-  $('pq-hint').textContent = data.isFinal
-    ? 'Lock in your final answer. Wager: ' + formatMoney(data.value)
-    : 'Tap fast — first correct wins the points!';
+
   player.inFlightChoice = null;
   player.questionFinal = !!data.isFinal;
+  player.hasBuzzed = false;
+  player.amAnswerer = false;
+  player.phase = data.phase || (data.isFinal ? 'answering' : 'reading');
+  player.phaseEndsAt = Date.now() + (data.duration || 0);
 
   const c = $('pq-choices');
   c.innerHTML = '';
@@ -1610,70 +1954,188 @@ function renderPlayerQuestion(player, data) {
     b.className = 'player-choice';
     b.innerHTML = `<span class="letter">${LETTERS[i]}</span><span>${text}</span>`;
     b.addEventListener('click', () => {
+      // Only allow tap in the right phase
+      if (data.isFinal) {
+        if (player.inFlightChoice !== null) return;
+        player.inFlightChoice = i;
+        [...c.children].forEach(child => child.disabled = true);
+        b.classList.add('selected');
+        player.conn.send({ type: 'finalAnswer', choiceIdx: i });
+        return;
+      }
+      const ok = (player.phase === 'answering' || player.phase === 'oppAnswering') && player.amAnswerer;
+      if (!ok) return;
       if (player.inFlightChoice !== null) return;
       player.inFlightChoice = i;
-      // Disable all
       [...c.children].forEach(child => child.disabled = true);
       b.classList.add('selected');
-      const msgType = data.isFinal ? 'finalAnswer' : 'answer';
-      player.conn.send({ type: msgType, choiceIdx: i });
+      player.conn.send({ type: 'answer', choiceIdx: i });
     });
     c.appendChild(b);
   });
+
+  // Initial gating
+  if (data.isFinal) {
+    // Final question has no read/buzz phases — players answer in parallel
+    $('pq-buzz-btn').classList.add('hidden');
+    $('pq-phase-bar').classList.add('hidden');
+    $('pq-hint').textContent = `Wager: ${formatMoney(data.value)} — lock in your answer!`;
+    [...c.children].forEach(child => child.disabled = false);
+    stopPlayerCountdown(player);
+  } else {
+    $('pq-buzz-btn').classList.remove('hidden');
+    $('pq-buzz-btn').disabled = true;
+    $('pq-buzz-btn').textContent = '🔔 BUZZ IN';
+    $('pq-buzz-btn').classList.remove('buzzed-by-me', 'buzzed-by-opp');
+    $('pq-phase-bar').classList.remove('hidden');
+    [...c.children].forEach(child => child.disabled = true);
+    $('pq-hint').textContent = 'Read carefully — buzz-in opens shortly.';
+    startPlayerCountdown(player);
+  }
+}
+
+function applyPlayerPhase(player, data) {
+  player.phase = data.phase;
+  player.phaseEndsAt = Date.now() + (data.duration || 0);
+  player.amAnswerer = (data.answerer === player.slot);
+
+  const buzzBtn = $('pq-buzz-btn');
+  const choices = [...$('pq-choices').children];
+
+  switch (data.phase) {
+    case 'reading':
+      buzzBtn.disabled = true;
+      choices.forEach(c => c.disabled = true);
+      break;
+    case 'buzzing':
+      // Both players can buzz — enable button, choices stay locked
+      buzzBtn.disabled = false;
+      player.hasBuzzed = false;
+      buzzBtn.classList.remove('buzzed-by-me', 'buzzed-by-opp');
+      buzzBtn.textContent = '🔔 BUZZ IN';
+      choices.forEach(c => c.disabled = true);
+      $('pq-hint').textContent = 'First to tap BUZZ gets to answer!';
+      break;
+    case 'answering':
+      if (player.amAnswerer) {
+        buzzBtn.disabled = true;
+        buzzBtn.classList.add('buzzed-by-me');
+        buzzBtn.textContent = '🔔 You buzzed in!';
+        choices.forEach(c => {
+          c.disabled = false;
+          c.classList.remove('faded');
+        });
+        $('pq-hint').textContent = 'Pick your answer — 10 seconds!';
+      } else {
+        buzzBtn.disabled = true;
+        buzzBtn.classList.add('buzzed-by-opp');
+        buzzBtn.textContent = '🔔 Opponent buzzed first';
+        choices.forEach(c => c.disabled = true);
+        $('pq-hint').textContent = 'Opponent is answering…';
+      }
+      break;
+    case 'oppAnswering':
+      if (player.amAnswerer) {
+        // We're getting a chance to steal
+        buzzBtn.classList.remove('buzzed-by-opp');
+        buzzBtn.classList.add('buzzed-by-me');
+        buzzBtn.textContent = '🔔 Your turn — steal!';
+        buzzBtn.disabled = true;
+        player.inFlightChoice = null;
+        choices.forEach((c, i) => {
+          if (i === data.wrongChoice) {
+            c.disabled = true;
+            c.classList.add('picked-wrong');
+          } else {
+            c.disabled = false;
+            c.classList.remove('faded');
+          }
+        });
+        $('pq-hint').textContent = 'Opponent was wrong — you get a chance!';
+      } else {
+        // Opponent is stealing
+        choices.forEach(c => c.disabled = true);
+        $('pq-hint').textContent = 'Opponent attempting a steal…';
+      }
+      break;
+    case 'revealed':
+      buzzBtn.disabled = true;
+      choices.forEach(c => c.disabled = true);
+      break;
+  }
 }
 
 function handlePlayerQuestionResult(player, data) {
   const buttons = [...$('pq-choices').children];
-  // Mark correct + my pick
-  if (data.correctIdx !== undefined && data.correctIdx !== null) {
-    buttons.forEach((b, i) => {
-      b.disabled = true;
-      if (i === data.correctIdx) b.classList.add('picked-correct');
-      else if (i === player.inFlightChoice) b.classList.add('picked-wrong');
-      else b.classList.add('faded');
-    });
-  }
-  let hint = '';
+
   switch (data.result) {
     case 'youCorrect':
-      hint = `✓ Correct! +${formatMoney(data.value)}`;
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === data.correctIdx) b.classList.add('picked-correct');
+        else b.classList.add('faded');
+      });
+      if (player.inFlightChoice !== null) buttons[player.inFlightChoice].classList.add('picked-correct');
+      $('pq-hint').textContent = `✓ Correct! +${formatMoney(data.value)}`;
       $('pq-choices').classList.add('flash-ok');
+      player.phase = 'revealed';
+      stopPlayerCountdown(player);
+      renderPlayerPhase(player);
       break;
     case 'oppCorrect':
-      hint = `${data.winner} got it. Better luck next tile.`;
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === data.correctIdx) b.classList.add('picked-correct');
+        else b.classList.add('faded');
+      });
+      $('pq-hint').textContent = `${data.winner} got it. Better luck next tile.`;
+      player.phase = 'revealed';
+      stopPlayerCountdown(player);
+      renderPlayerPhase(player);
       break;
     case 'youWrong':
-      hint = `✗ Wrong. -${formatMoney(data.value)}.`;
-      $('pq-choices').classList.add('flash-err');
-      break;
-    case 'oppWrong':
-      hint = `Both wrong! Correct answer shown.`;
-      break;
-    case 'youWrongOppCan':
-      hint = `✗ Wrong. -${formatMoney(data.value)}. Waiting for opponent to attempt…`;
-      // For this case, don't reveal correct — let player just wait
       buttons.forEach((b, i) => {
         b.disabled = true;
         if (i === data.yourChoice) b.classList.add('picked-wrong');
       });
+      $('pq-hint').textContent = data.timedOut
+        ? `⏱ Time's up! -${formatMoney(data.value)}`
+        : `✗ Wrong. -${formatMoney(data.value)}`;
+      $('pq-choices').classList.add('flash-err');
+      // A follow-up phase (oppAnswering) or allDone message will arrive
       break;
-    case 'oppWrongYouCan':
-      hint = `Opponent was wrong! You can still answer for ${formatMoney(data.value)}.`;
-      // Re-enable buttons (but they only get one shot too)
+    case 'oppWrong':
+      // Opponent got it wrong — a phase change to oppAnswering will follow giving us a chance
+      if (data.oppChoice !== null && data.oppChoice !== undefined) {
+        buttons.forEach((b, i) => {
+          if (i === data.oppChoice) b.classList.add('picked-wrong');
+        });
+      }
+      $('pq-hint').textContent = `Opponent was wrong! Get ready to steal…`;
+      break;
+    case 'allDone':
       buttons.forEach((b, i) => {
-        if (i !== data.oppChoice) {
-          b.disabled = false;
-          b.classList.remove('faded');
-        } else {
-          b.classList.add('picked-wrong');
-        }
+        b.disabled = true;
+        if (i === data.correctIdx) b.classList.add('picked-correct');
+        else if (!b.classList.contains('picked-wrong')) b.classList.add('faded');
       });
-      // Reset their inFlight to allow second tap
-      player.inFlightChoice = null;
+      $('pq-hint').textContent = `Both attempts done. Answer revealed.`;
+      player.phase = 'revealed';
+      stopPlayerCountdown(player);
+      renderPlayerPhase(player);
+      break;
+    case 'noBuzz':
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === data.correctIdx) b.classList.add('picked-correct');
+        else b.classList.add('faded');
+      });
+      $('pq-hint').textContent = `Nobody buzzed in. Answer revealed.`;
+      player.phase = 'revealed';
+      stopPlayerCountdown(player);
+      renderPlayerPhase(player);
       break;
   }
-  $('pq-hint').textContent = hint;
-  // Clear flash after a moment
   setTimeout(() => { $('pq-choices').classList.remove('flash-ok', 'flash-err'); }, 1500);
 }
 
