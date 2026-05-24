@@ -866,75 +866,407 @@ const Snd = (() => {
 })();
 
 // ============================================================
-//   QUESTION BANK  (each question has 4 choices; idx 0 = correct)
+//   QUESTION BANK
+//   - CATEGORIES: static labels / CSS classes (shared host+player)
+//   - QUESTION_BANK[cat].round{1,2}[tier] = ARRAY of questions
+//   - pickGameQuestions() randomly picks one per tier per game
+//   - To grow the pool, just append more {q, choices} to any array
+//     below. The game logic auto-randomizes from whatever's there.
+//   Each question: idx 0 in `choices` is the correct answer
+//   (the game shuffles choices on display so position is random).
 // ============================================================
-const QUESTIONS = {
-  round1: {
-    hp: { label: "Harry Potter", cls: "cat-hp", tiers: {
-      100: { q: "What is the name of Harry Potter's pet owl?", choices: ["Hedwig", "Errol", "Pigwidgeon", "Crookshanks"] },
-      200: { q: "Which Hogwarts house is known for valuing bravery and chivalry?", choices: ["Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin"] },
-      300: { q: "Who is the half-giant who serves as Hogwarts' gamekeeper and Care of Magical Creatures professor?", choices: ["Rubeus Hagrid", "Argus Filch", "Horace Slughorn", "Remus Lupin"] },
-      400: { q: "Which of these is NOT one of the three Deathly Hallows?", choices: ["The Sword of Gryffindor", "The Elder Wand", "The Resurrection Stone", "The Cloak of Invisibility"] },
-      500: { q: "What is the incantation for the Patronus Charm?", choices: ["Expecto Patronum", "Riddikulus", "Expelliarmus", "Lumos Maxima"] }
-    }},
-    fb: { label: "Fantastic Beasts", cls: "cat-fb", tiers: {
-      100: { q: "What kind of mole-like creature is Newt's companion who is obsessed with shiny things?", choices: ["Niffler", "Mooncalf", "Diricawl", "Erumpent"] },
-      200: { q: "What is Newt Scamander's profession?", choices: ["Magizoologist", "Auror", "Wandmaker", "Curse-breaker"] },
-      300: { q: "In which city does the first Fantastic Beasts film primarily take place?", choices: ["New York City", "London", "Paris", "Chicago"] },
-      400: { q: "What is the name of the No-Maj baker who befriends Newt?", choices: ["Jacob Kowalski", "Henry Shaw", "Percival Graves", "Abernathy"] },
-      500: { q: "What is the name of America's magical governing body?", choices: ["MACUSA", "The ICW", "The Ministry of Magic", "The Council of Magic"] }
-    }},
-    st: { label: "Star Trek", cls: "cat-st", tiers: {
-      100: { q: "'Space: the final ______.' Fill in the blank.", choices: ["Frontier", "Mystery", "Voyage", "Adventure"] },
-      200: { q: "What is the name of Captain Kirk's iconic starship?", choices: ["USS Enterprise", "USS Voyager", "USS Defiant", "USS Discovery"] },
-      300: { q: "What is the home planet of Spock's father, Sarek?", choices: ["Vulcan", "Romulus", "Andoria", "Bajor"] },
-      400: { q: "In TNG, what is the name of the android serving as Operations Officer aboard the Enterprise-D?", choices: ["Data", "Worf", "Geordi La Forge", "Wesley Crusher"] },
-      500: { q: "What is the traditional Vulcan greeting?", choices: ["Live long and prosper", "May the force be with you", "Peace and long life", "Engage at warp speed"] }
-    }},
-    ds: { label: "Disney", cls: "cat-ds", tiers: {
-      100: { q: "What is the name of Mickey Mouse's pet dog?", choices: ["Pluto", "Goofy", "Tramp", "Bolt"] },
-      200: { q: "In The Lion King, who is Simba's villainous uncle?", choices: ["Scar", "Mufasa", "Zazu", "Shenzi"] },
-      300: { q: "What is the name of the kingdom ruled by Elsa in Frozen?", choices: ["Arendelle", "Corona", "Agrabah", "DunBroch"] },
-      400: { q: "In Disney's Aladdin, what is the name of Jasmine's pet tiger?", choices: ["Rajah", "Shere Khan", "Sahara", "Sultan"] },
-      500: { q: "What was Disney's first full-length animated feature film, released in 1937?", choices: ["Snow White and the Seven Dwarfs", "Pinocchio", "Cinderella", "Bambi"] }
-    }}
+const CATEGORIES = {
+  hp: { label: "Harry Potter",     cls: "cat-hp" },
+  fb: { label: "Fantastic Beasts", cls: "cat-fb" },
+  st: { label: "Star Trek",        cls: "cat-st" },
+  ds: { label: "Disney",           cls: "cat-ds" }
+};
+
+const QUESTION_BANK = {
+  // ============== HARRY POTTER ==============
+  hp: {
+    round1: {
+      100: [
+        { q: "What is the name of Harry Potter's pet owl?", choices: ["Hedwig", "Errol", "Pigwidgeon", "Crookshanks"] },
+        { q: "Who is Harry's best friend at Hogwarts (the boy)?", choices: ["Ron Weasley", "Neville Longbottom", "Seamus Finnigan", "Dean Thomas"] },
+        { q: "What is Hermione's last name?", choices: ["Granger", "Weasley", "Lovegood", "Patil"] },
+        { q: "What position does Harry play on his Quidditch team?", choices: ["Seeker", "Keeper", "Chaser", "Beater"] },
+        { q: "What is the name of the bank in Diagon Alley, run by goblins?", choices: ["Gringotts", "Ollivanders", "Borgin and Burkes", "Eeylops"] },
+        { q: "What kind of broomstick does Harry receive in his first year?", choices: ["Nimbus 2000", "Firebolt", "Cleansweep", "Nimbus 2001"] }
+      ],
+      200: [
+        { q: "Which Hogwarts house is known for valuing bravery and chivalry?", choices: ["Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin"] },
+        { q: "What is Voldemort's real birth name?", choices: ["Tom Marvolo Riddle", "Tom Marvolo Gaunt", "Tom Salazar Riddle", "Tom Morfin Riddle"] },
+        { q: "Who is the headmaster of Hogwarts for most of the first six books?", choices: ["Albus Dumbledore", "Severus Snape", "Minerva McGonagall", "Horace Slughorn"] },
+        { q: "What was Hagrid allegedly expelled from Hogwarts for?", choices: ["Opening the Chamber of Secrets", "Stealing dragon eggs", "Cheating on exams", "Killing a unicorn"] },
+        { q: "What is the name of Filch's cat?", choices: ["Mrs Norris", "Crookshanks", "Tibbles", "Snowy"] }
+      ],
+      300: [
+        { q: "Who is the half-giant Hogwarts gamekeeper and (later) Care of Magical Creatures professor?", choices: ["Rubeus Hagrid", "Argus Filch", "Horace Slughorn", "Remus Lupin"] },
+        { q: "What kind of magical creature is Buckbeak?", choices: ["A Hippogriff", "A Griffin", "A Thestral", "A Centaur"] },
+        { q: "Who is the Defense Against the Dark Arts teacher in Prisoner of Azkaban?", choices: ["Remus Lupin", "Severus Snape", "Mad-Eye Moody", "Dolores Umbridge"] },
+        { q: "From which London station platform does the Hogwarts Express depart?", choices: ["Platform 9¾ at King's Cross", "Platform 13 at Euston", "Platform 7 at Paddington", "Platform 1 at Charing Cross"] },
+        { q: "What does Sirius Black leave to Harry in his will?", choices: ["12 Grimmauld Place and Kreacher", "His motorcycle", "His wand", "A vault of gold"] }
+      ],
+      400: [
+        { q: "Which of these is NOT one of the three Deathly Hallows?", choices: ["The Sword of Gryffindor", "The Elder Wand", "The Resurrection Stone", "The Cloak of Invisibility"] },
+        { q: "What is the name of Hermione's pet cat?", choices: ["Crookshanks", "Mrs Norris", "Tibbles", "Tufty"] },
+        { q: "What kind of creature must champions face in the first task of the Triwizard Tournament?", choices: ["Dragons", "Mermaids", "Sphinxes", "Boggarts"] },
+        { q: "What position does Cedric Diggory play on his Quidditch team?", choices: ["Seeker", "Keeper", "Beater", "Chaser"] },
+        { q: "At the end of Prisoner of Azkaban, who is revealed to actually be Peter Pettigrew in animal form?", choices: ["Scabbers (Ron's rat)", "Crookshanks", "Hedwig", "Trevor"] }
+      ],
+      500: [
+        { q: "What is the incantation for the Patronus Charm?", choices: ["Expecto Patronum", "Riddikulus", "Expelliarmus", "Lumos Maxima"] },
+        { q: "What form does Harry's Patronus take?", choices: ["A stag", "A doe", "An otter", "A phoenix"] },
+        { q: "What phrase activates the Marauder's Map?", choices: ["I solemnly swear that I am up to no good", "Mischief managed", "Reveal your secrets", "Lumos Mappus"] },
+        { q: "Who actually kills Dumbledore at the end of Half-Blood Prince?", choices: ["Severus Snape", "Bellatrix Lestrange", "Draco Malfoy", "Lord Voldemort"] },
+        { q: "Who is the 'Half-Blood Prince'?", choices: ["Severus Snape", "Tom Riddle", "Harry Potter", "James Potter"] }
+      ]
+    },
+    round2: {
+      200: [
+        { q: "What is the full name of the Hogwarts ghost known as 'Nearly Headless Nick'?", choices: ["Sir Nicholas de Mimsy-Porpington", "Sir Patrick Delaney-Podmore", "Sir Cadogan of the Stair", "Baron Sigismund the Bloody"] },
+        { q: "What is the name of the house-elf who serves the ancient House of Black?", choices: ["Kreacher", "Dobby", "Winky", "Hokey"] },
+        { q: "What does the acronym S.P.E.W. stand for in Hermione's elf-rights movement?", choices: ["Society for the Promotion of Elfish Welfare", "Society for Preserving Elfish Worth", "Save Persecuted Elves and Witches", "Standards for Proper Elf Welfare"] },
+        { q: "Who runs The Quibbler, the magazine that rivals the Daily Prophet?", choices: ["Xenophilius Lovegood", "Rita Skeeter", "Cuthbert Mockridge", "Barnabas Cuffe"] },
+        { q: "What is the only known Horcrux that was made unintentionally?", choices: ["Harry Potter himself", "Nagini the snake", "Tom Riddle's diary", "Slytherin's locket"] }
+      ],
+      400: [
+        { q: "Who kills Bellatrix Lestrange in the Battle of Hogwarts?", choices: ["Molly Weasley", "Neville Longbottom", "Harry Potter", "Minerva McGonagall"] },
+        { q: "What is Albus Dumbledore's full name?", choices: ["Albus Percival Wulfric Brian Dumbledore", "Albus Brian Wulfric Dumbledore", "Albus Wulfric Brian Dumbledore", "Albus Percival Brian Dumbledore"] },
+        { q: "The Triwizard Cup secretly acts as a Portkey, transporting Harry and Cedric to where?", choices: ["The Little Hangleton graveyard", "Malfoy Manor", "Godric's Hollow", "Azkaban"] },
+        { q: "What is the name of Viktor Krum's school?", choices: ["Durmstrang Institute", "Beauxbatons Academy", "Ilvermorny", "Castelobruxo"] },
+        { q: "How does Harry kill the basilisk in the Chamber of Secrets?", choices: ["With the Sword of Gryffindor", "With a Killing Curse", "With Fawkes' tears", "By feeding it Mandrake"] }
+      ],
+      600: [
+        { q: "What was the name of Tom Riddle's mother, who died shortly after giving birth to him?", choices: ["Merope Gaunt", "Walburga Black", "Cassiopeia Riddle", "Eileen Prince"] },
+        { q: "James Potter's father — Harry's grandfather — was named?", choices: ["Fleamont Potter", "Charlus Potter", "Henry Potter", "Linfred Potter"] },
+        { q: "The Marauders' nicknames are Padfoot, Moony, Wormtail and …?", choices: ["Prongs", "Antlers", "Hoof", "Tail"] },
+        { q: "In what year (according to Pottermore canon) was Hogwarts founded?", choices: ["Around 990 AD", "Around 1066 AD", "Around 1200 AD", "Around 800 AD"] },
+        { q: "What does the Imperius Curse actually do to its victim?", choices: ["Takes total control of their actions", "Causes excruciating pain", "Kills them instantly", "Paralyses them"] }
+      ],
+      800: [
+        { q: "What was Dolores Umbridge's position at the Ministry of Magic before becoming Hogwarts High Inquisitor?", choices: ["Senior Undersecretary to the Minister for Magic", "Head of the Auror Office", "Head of the Department of Magical Education", "Director of the Improper Use of Magic Office"] },
+        { q: "The legend of the Three Brothers — the origin of the Deathly Hallows — is about which family?", choices: ["The Peverells", "The Gaunts", "The Blacks", "The Potters"] },
+        { q: "What does the spell 'Sectumsempra' do, as invented by the Half-Blood Prince?", choices: ["Slashes the target as if by a sword", "Reveals hidden objects", "Cleans wounds", "Removes memories"] },
+        { q: "What is the name of Dumbledore's pet phoenix?", choices: ["Fawkes", "Hedwig", "Pigwidgeon", "Errol"] },
+        { q: "What N.E.W.T.-level potion lets the drinker briefly assume someone else's appearance?", choices: ["Polyjuice Potion", "Felix Felicis", "Veritaserum", "Amortentia"] }
+      ],
+      1000: [
+        { q: "Which of these is NOT one of the four founders of Hogwarts?", choices: ["Cassandra Trelawney", "Godric Gryffindor", "Helga Hufflepuff", "Salazar Slytherin"] },
+        { q: "What is the name of Albus Dumbledore's younger brother, the barman at the Hog's Head?", choices: ["Aberforth", "Aurelius", "Percival", "Aldrick"] },
+        { q: "Who is credited (per his Chocolate Frog card) with discovering the 12 uses of dragon's blood?", choices: ["Albus Dumbledore", "Nicolas Flamel", "Newt Scamander", "Severus Snape"] },
+        { q: "Severus Snape is technically killed by which creature, on Voldemort's order?", choices: ["Nagini", "Buckbeak", "Aragog", "Fawkes"] },
+        { q: "What gift does Dumbledore leave Hermione in his will?", choices: ["The Tales of Beedle the Bard", "His personal Pensieve", "A set of magical quills", "The Sword of Gryffindor"] }
+      ]
+    }
   },
-  round2: {
-    hp: { label: "Harry Potter", cls: "cat-hp", tiers: {
-      200: { q: "What is the full name of the Hogwarts ghost known as 'Nearly Headless Nick'?", choices: ["Sir Nicholas de Mimsy-Porpington", "Sir Patrick Delaney-Podmore", "Sir Cadogan of the Stair", "Baron Sigismund the Bloody"] },
-      400: { q: "Who killed Bellatrix Lestrange in the Battle of Hogwarts?", choices: ["Molly Weasley", "Neville Longbottom", "Harry Potter", "Minerva McGonagall"] },
-      600: { q: "What was the name of Tom Riddle's mother, who died shortly after giving birth?", choices: ["Merope Gaunt", "Walburga Black", "Cassiopeia Riddle", "Eileen Prince"] },
-      800: { q: "What was Dolores Umbridge's position at the Ministry of Magic before becoming Hogwarts High Inquisitor?", choices: ["Senior Undersecretary to the Minister for Magic", "Head of the Auror Office", "Head of the Department of Magical Education", "Director of the Improper Use of Magic Office"] },
-      1000: { q: "Which of these is NOT one of the four founders of Hogwarts?", choices: ["Cassandra Trelawney", "Godric Gryffindor", "Helga Hufflepuff", "Salazar Slytherin"] }
-    }},
-    fb: { label: "Fantastic Beasts", cls: "cat-fb", tiers: {
-      200: { q: "Who is Newt Scamander's main dark-wizard adversary across the Fantastic Beasts films?", choices: ["Gellert Grindelwald", "Lord Voldemort", "Percival Graves", "Mundungus Fletcher"] },
-      400: { q: "In Fantastic Beasts, Nagini is what kind of cursed being — destined to eventually transform permanently into a snake?", choices: ["A Maledictus", "An Animagus", "A Werewolf", "A Veela"] },
-      600: { q: "What is the name of the obscurus-hosting young man played by Ezra Miller in the Fantastic Beasts series?", choices: ["Credence Barebone", "Theseus Scamander", "Yusuf Kama", "Abernathy"] },
-      800: { q: "As young men, Albus Dumbledore and Gellert Grindelwald made what kind of pact preventing them from ever fighting each other?", choices: ["A blood pact", "An Unbreakable Vow", "A Fidelius bond", "A Geminio link"] },
-      1000: { q: "Which mythical creature is central to The Secrets of Dumbledore as the chooser of the next Supreme Mugwump?", choices: ["The Qilin", "The Hippogriff", "The Thestral", "The Sphinx"] }
-    }},
-    st: { label: "Star Trek", cls: "cat-st", tiers: {
-      200: { q: "What space station is the setting of Star Trek: Deep Space Nine?", choices: ["Deep Space Nine", "Starbase 74", "Empok Nor", "Jupiter Station"] },
-      400: { q: "Who is the captain of the USS Voyager in Star Trek: Voyager?", choices: ["Kathryn Janeway", "Benjamin Sisko", "Jean-Luc Picard", "Christopher Pike"] },
-      600: { q: "Which liberated Borg drone joins the crew of Voyager?", choices: ["Seven of Nine", "Hugh", "Locutus", "One"] },
-      800: { q: "What crystals are essential to regulating the matter/antimatter reactions of a Federation warp drive?", choices: ["Dilithium", "Trilithium", "Latinum", "Verteron"] },
-      1000: { q: "Which Klingon Chancellor signed the Khitomer Accords with the Federation, helping to end decades of hostility?", choices: ["Chancellor Gorkon", "Chancellor K'mpec", "Chancellor Martok", "Chancellor Azetbur"] }
-    }},
-    ds: { label: "Disney", cls: "cat-ds", tiers: {
-      200: { q: "What is the name of Ariel's crab companion in The Little Mermaid?", choices: ["Sebastian", "Flounder", "Scuttle", "Triton"] },
-      400: { q: "In what year did Walt and Roy Disney co-found their cartoon studio?", choices: ["1923", "1928", "1937", "1955"] },
-      600: { q: "In Beauty and the Beast, what is the name of the teacup who is Mrs. Potts' son?", choices: ["Chip", "Cogsworth", "Lumière", "Pip"] },
-      800: { q: "Who is the villain who curses Princess Aurora in Sleeping Beauty?", choices: ["Maleficent", "Cruella de Vil", "The Evil Queen", "Ursula"] },
-      1000: { q: "Which of these is NOT one of the seven dwarfs from Snow White?", choices: ["Stinky", "Doc", "Bashful", "Sneezy"] }
-    }}
+
+  // ============== FANTASTIC BEASTS ==============
+  fb: {
+    round1: {
+      100: [
+        { q: "What kind of mole-like creature is Newt's companion who is obsessed with shiny things?", choices: ["Niffler", "Mooncalf", "Diricawl", "Erumpent"] },
+        { q: "In which decade is the first Fantastic Beasts film set?", choices: ["The 1920s", "The 1910s", "The 1930s", "The 1940s"] },
+        { q: "In which city does the first Fantastic Beasts film primarily take place?", choices: ["New York City", "London", "Paris", "Chicago"] },
+        { q: "Who plays Newt Scamander in the Fantastic Beasts films?", choices: ["Eddie Redmayne", "Eddie Marsan", "Eddie Murphy", "Eddie Izzard"] },
+        { q: "Who plays the young Albus Dumbledore in the Fantastic Beasts films?", choices: ["Jude Law", "Michael Gambon", "Richard Harris", "Toby Regbo"] }
+      ],
+      200: [
+        { q: "What is Newt Scamander's profession?", choices: ["Magizoologist", "Auror", "Wandmaker", "Curse-breaker"] },
+        { q: "What is the American magical word for a non-magical person?", choices: ["No-Maj", "Squib", "Muggle", "Non-Mag"] },
+        { q: "Who is the President of MACUSA in the first Fantastic Beasts film?", choices: ["Seraphina Picquery", "Madam Bones", "Vicência Santos", "Annabel Reed"] },
+        { q: "What is the name of Newt's older brother, a celebrated Ministry Auror?", choices: ["Theseus Scamander", "Aurelius Scamander", "Lysander Scamander", "Newton Scamander Sr"] },
+        { q: "What is Tina Goldstein's job at MACUSA at the start of the first film?", choices: ["Investigator (a demoted ex-Auror)", "Wandmaker", "Healer", "Translator"] }
+      ],
+      300: [
+        { q: "What is the name of the No-Maj baker who befriends Newt?", choices: ["Jacob Kowalski", "Henry Shaw", "Percival Graves", "Abernathy"] },
+        { q: "What is Queenie Goldstein's magical talent?", choices: ["Legilimency (mind-reading)", "Animagus transformation", "Long-distance Apparition", "Time manipulation"] },
+        { q: "What kind of dark force does Credence harbour inside himself?", choices: ["An Obscurus", "A Boggart", "A Dementor", "A Lethifold"] },
+        { q: "What is the name of Newt's little twig-like Bowtruckle?", choices: ["Pickett", "Dougal", "Frank", "Niffy"] },
+        { q: "Who is revealed at the end of the first film to actually be Grindelwald in disguise?", choices: ["Percival Graves", "Henry Shaw Sr", "Abernathy", "Achilles Tolliver"] }
+      ],
+      400: [
+        { q: "What is the name of America's magical governing body?", choices: ["MACUSA", "The ICW", "The Ministry of Magic", "The Council of Magic"] },
+        { q: "Who leads the New Salem Philanthropic Society (the 'Second Salemers')?", choices: ["Mary Lou Barebone", "Seraphina Picquery", "Henry Shaw Sr", "Vinda Rosier"] },
+        { q: "What is the name of the wandmaker who is briefly seen in the Fantastic Beasts series?", choices: ["Mykew Gregorovitch", "Garrick Ollivander", "Wolf Antonelli", "Pavel Karkaroff"] },
+        { q: "Which serpentine, feathered creature lays valuable silver-shelled eggs in Newt's case?", choices: ["Occamy", "Runespoor", "Antipodean Opaleye", "Acromantula"] },
+        { q: "Newt's textbook of magical creatures, used at Hogwarts, is titled?", choices: ["Fantastic Beasts and Where to Find Them", "Magical Creatures of the British Isles", "A Field Guide to Hippogriffs", "A Compendium of Magical Beasts"] }
+      ],
+      500: [
+        { q: "Who is Newt Scamander's main dark-wizard adversary across the Fantastic Beasts films?", choices: ["Gellert Grindelwald", "Lord Voldemort", "Percival Graves", "Mundungus Fletcher"] },
+        { q: "In Fantastic Beasts, Nagini is what kind of cursed being — destined to eventually transform permanently into a snake?", choices: ["A Maledictus", "An Animagus", "A Werewolf", "A Veela"] },
+        { q: "Which large rhino-like creature does Newt lure with a courtship dance through Central Park?", choices: ["The Erumpent", "The Graphorn", "The Nundu", "The Demiguise"] },
+        { q: "The fur of which invisible, ape-like creature is used to make Invisibility Cloaks?", choices: ["The Demiguise", "The Occamy", "The Bowtruckle", "The Niffler"] },
+        { q: "Where does Newt mostly keep his vast collection of magical creatures?", choices: ["Inside his magically-expanded suitcase", "In a wing of his London flat", "In a cottage in Dorset", "In a hidden room at Hogwarts"] }
+      ]
+    },
+    round2: {
+      200: [
+        { q: "What kind of pact prevents Albus Dumbledore and Gellert Grindelwald from ever directly fighting each other?", choices: ["A blood pact", "An Unbreakable Vow", "A Fidelius bond", "A Geminio link"] },
+        { q: "Which mythical creature is central to The Secrets of Dumbledore, as the chooser of the next Supreme Mugwump?", choices: ["The Qilin", "The Hippogriff", "The Thestral", "The Sphinx"] },
+        { q: "Who plays Gellert Grindelwald in The Secrets of Dumbledore (the third film)?", choices: ["Mads Mikkelsen", "Colin Farrell", "Christian Bale", "Hugo Weaving"] },
+        { q: "What is the title of the third Fantastic Beasts film?", choices: ["The Secrets of Dumbledore", "The Crimes of Grindelwald", "Beasts of the World", "The Origins of Magic"] },
+        { q: "What is Theseus Scamander's profession at the British Ministry of Magic?", choices: ["Auror (Head of the Auror Office)", "Wandmaker", "Quidditch player", "Curse-breaker"] }
+      ],
+      400: [
+        { q: "What is the name of the obscurus-hosting young man played by Ezra Miller?", choices: ["Credence Barebone", "Theseus Scamander", "Yusuf Kama", "Abernathy"] },
+        { q: "Which French city is the main setting of The Crimes of Grindelwald?", choices: ["Paris", "Marseille", "Lyon", "Strasbourg"] },
+        { q: "Which side does Queenie Goldstein eventually join at the end of The Crimes of Grindelwald?", choices: ["Grindelwald's", "MACUSA's", "Newt's", "The British Ministry's"] },
+        { q: "In what kind of show is Nagini (the Maledictus) performing when Credence finds her?", choices: ["A magical circus", "An opera", "A theatre play", "A ballet"] },
+        { q: "What is the name of Newt's assistant in The Secrets of Dumbledore?", choices: ["Bunty Broadacre", "Tina Goldstein", "Queenie Goldstein", "Leta Lestrange"] }
+      ],
+      600: [
+        { q: "In what year is The Crimes of Grindelwald set?", choices: ["1927", "1925", "1932", "1945"] },
+        { q: "At the climax of The Crimes of Grindelwald, Credence is told his 'true' name is?", choices: ["Aurelius Dumbledore", "Marcus Dumbledore", "Septimus Riddle", "Hadrian Lestrange"] },
+        { q: "Which Lestrange family member joins Newt and Theseus' group in The Crimes of Grindelwald?", choices: ["Leta Lestrange", "Bellatrix Lestrange", "Rodolphus Lestrange", "Corvus Lestrange Jr"] },
+        { q: "What magical creature appears to Credence in The Crimes of Grindelwald, hinting at his Dumbledore lineage?", choices: ["A phoenix", "A thestral", "A hippogriff", "A unicorn"] },
+        { q: "Where does the climactic scene of The Crimes of Grindelwald take place?", choices: ["Père Lachaise Cemetery in Paris", "Hogwarts grounds", "Nurmengard fortress", "MACUSA headquarters"] }
+      ],
+      800: [
+        { q: "What is the name of the fortress where Grindelwald is imprisoned at the start of The Crimes of Grindelwald?", choices: ["Nurmengard", "Azkaban", "MACUSA holding cells", "The Pit of Bran"] },
+        { q: "What special ability of the Qilin makes it the traditional chooser of magical leaders?", choices: ["It bows only to those of pure heart", "It sings prophecies of the future", "It glows for the chosen one", "It can speak any language"] },
+        { q: "Inside Newt's suitcase are many different…", choices: ["Habitats / mini-ecosystems for his creatures", "Spell-research libraries", "Time-frozen rooms", "Hidden duelling chambers"] },
+        { q: "Which Senegalese wizard joins forces with Newt's circle, having sworn an oath to kill Credence?", choices: ["Yusuf Kama", "Theseus Scamander", "Achilles Tolliver", "Vinda Rosier"] },
+        { q: "Which character does Albus Dumbledore reveal he cannot personally fight Grindelwald because of?", choices: ["The blood pact they made as young men", "An ancient oath sworn at Hogwarts", "A wand bond he forfeited", "A vow made to Newt's brother"] }
+      ],
+      1000: [
+        { q: "In which English village did the young Albus Dumbledore live alongside his family — and meet Gellert Grindelwald?", choices: ["Godric's Hollow", "Hogsmeade", "Ottery St Catchpole", "Tinworth"] },
+        { q: "By the end of The Crimes of Grindelwald, Tina Goldstein has been promoted to what role at MACUSA?", choices: ["Head of the Auror Office", "President-elect", "Director of Magical Creatures", "Head Wandsmith"] },
+        { q: "What does Newt offer Dumbledore at the end of The Secrets of Dumbledore, marking the loosening of the blood pact?", choices: ["A piece of the destroyed pendant", "A new wand", "A magical creature", "Bunty's letter of resignation"] },
+        { q: "The Maledictus curse means Nagini is destined to eventually become which iconic Harry Potter character?", choices: ["Voldemort's snake, also named Nagini", "A wandless witch", "Voldemort's ghost", "A protected Animagus"] },
+        { q: "What is the name of the Bhutanese setting where the bulk of The Secrets of Dumbledore unfolds?", choices: ["The mountain temple of Bhutan (the 'Eyrie')", "Beauxbatons Castle", "Drumstrang's caves", "Hogsmeade-on-Sea"] }
+      ]
+    }
   },
-  final: {
+
+  // ============== STAR TREK ==============
+  st: {
+    round1: {
+      100: [
+        { q: "'Space: the final ______.' Fill in the blank.", choices: ["Frontier", "Mystery", "Voyage", "Adventure"] },
+        { q: "What is the name of Captain Kirk's iconic starship?", choices: ["USS Enterprise", "USS Voyager", "USS Defiant", "USS Discovery"] },
+        { q: "What is the traditional Vulcan greeting?", choices: ["Live long and prosper", "May the force be with you", "Peace and long life", "Engage at warp speed"] },
+        { q: "What is Mr Spock's species (predominantly)?", choices: ["Vulcan", "Klingon", "Romulan", "Andorian"] },
+        { q: "Which Starfleet command word famously orders someone to be transported aboard?", choices: ["Energize", "Engage", "Make it so", "Beam me down"] }
+      ],
+      200: [
+        { q: "What is the home planet of Spock's father, Sarek?", choices: ["Vulcan", "Romulus", "Andoria", "Bajor"] },
+        { q: "Who is the captain of the Enterprise-D in Star Trek: The Next Generation?", choices: ["Jean-Luc Picard", "James T Kirk", "Benjamin Sisko", "Kathryn Janeway"] },
+        { q: "What does the abbreviation 'TOS' stand for in Star Trek fandom?", choices: ["The Original Series", "The Old Star Trek", "Trek of the Stars", "The Outer Series"] },
+        { q: "Which engineer in the original series is known for his Scottish accent and 'she cannae take much more' style protests?", choices: ["Montgomery Scott", "Leonard McCoy", "Hikaru Sulu", "Pavel Chekov"] },
+        { q: "What is the name of Starfleet's parent governmental body?", choices: ["The United Federation of Planets", "The Earth Republic", "The Galactic Federation", "The Interstellar Council"] }
+      ],
+      300: [
+        { q: "In TNG, what is the name of the android Operations Officer aboard the Enterprise-D?", choices: ["Lt Commander Data", "Worf", "Geordi La Forge", "Wesley Crusher"] },
+        { q: "Which Klingon officer serves on the bridge of the Enterprise-D?", choices: ["Worf", "Kang", "Kor", "Martok"] },
+        { q: "Who is the ship's counselor aboard the Enterprise-D?", choices: ["Deanna Troi", "Beverly Crusher", "Lwaxana Troi", "Tasha Yar"] },
+        { q: "Captain Picard's first officer aboard the Enterprise-D is?", choices: ["William T Riker", "Geordi La Forge", "Data", "Worf"] },
+        { q: "What single word does Captain Picard typically say to order the ship to depart at warp?", choices: ["Engage", "Energize", "Onwards", "Punch it"] }
+      ],
+      400: [
+        { q: "Where is Star Trek: Deep Space Nine primarily set?", choices: ["Aboard the space station Deep Space Nine", "Aboard USS Voyager", "Aboard USS Discovery", "Aboard the Enterprise-E"] },
+        { q: "Who is the captain of the USS Voyager?", choices: ["Kathryn Janeway", "Benjamin Sisko", "Jean-Luc Picard", "Christopher Pike"] },
+        { q: "What is the Borg's signature warning to those they are about to assimilate?", choices: ["Resistance is futile", "Submit and serve", "Become one with us", "You will be deleted"] },
+        { q: "What is Captain Picard's first name?", choices: ["Jean-Luc", "Jean-Pierre", "Jean-Paul", "Jean-Marc"] },
+        { q: "What is the unusual nature of 'The Doctor' aboard Voyager?", choices: ["He's a sentient Emergency Medical Hologram", "He's a Klingon medic", "He's a Vulcan healer", "He's a time-displaced 21st-century human"] }
+      ],
+      500: [
+        { q: "Who invented Earth's first warp drive (and is met by the crew of the Enterprise-E in First Contact)?", choices: ["Zefram Cochrane", "Henry Starling", "Jonathan Archer", "Khan Noonien Singh"] },
+        { q: "What is the name of the iconic curved Klingon honour blade?", choices: ["Bat'leth", "Mek'leth", "Tajtiq", "D'k tahg"] },
+        { q: "Which liberated Borg drone joins the crew of Voyager?", choices: ["Seven of Nine", "Hugh", "Locutus", "One"] },
+        { q: "What is the name of Spock's human mother?", choices: ["Amanda Grayson", "T'Pring", "T'Lar", "Saavik"] },
+        { q: "Who is the genetically-engineered antagonist of Star Trek II: The Wrath of Khan?", choices: ["Khan Noonien Singh", "Joachim", "Marla McGivers", "Captain Terrell"] }
+      ]
+    },
+    round2: {
+      200: [
+        { q: "What kind of crystals are essential to regulating the matter/antimatter reactions of a Federation warp drive?", choices: ["Dilithium", "Trilithium", "Latinum", "Verteron"] },
+        { q: "What is the official Ferengi currency?", choices: ["Gold-pressed latinum", "Federation credits", "Bars of pure gold", "Energy quanta"] },
+        { q: "Which Klingon Chancellor's assassination ultimately leads to the Khitomer Accords being signed?", choices: ["Chancellor Gorkon", "Chancellor K'mpec", "Chancellor Martok", "Chancellor Mogh"] },
+        { q: "Who is the commander of Deep Space Nine (later promoted to Captain)?", choices: ["Benjamin Sisko", "Kira Nerys", "Jadzia Dax", "Worf"] },
+        { q: "What class is the USS Enterprise-E?", choices: ["Sovereign-class", "Galaxy-class", "Constitution-class", "Intrepid-class"] }
+      ],
+      400: [
+        { q: "Who is the first joined-Trill main character on Deep Space Nine?", choices: ["Jadzia Dax", "Curzon Dax", "Jonas Talas", "Lela Dax"] },
+        { q: "Which Cardassian ex-spy runs a tailor shop on Deep Space Nine?", choices: ["Elim Garak", "Gul Dukat", "Damar", "Enabran Tain"] },
+        { q: "USS Voyager is stranded in which quadrant of the galaxy?", choices: ["The Delta Quadrant", "The Beta Quadrant", "The Gamma Quadrant", "The Alpha Quadrant"] },
+        { q: "Captain Jonathan Archer commands the Enterprise NX-01 in which Star Trek series?", choices: ["Star Trek: Enterprise", "Voyager", "Discovery", "Picard"] },
+        { q: "The catchphrase 'Make it so' is most associated with which captain?", choices: ["Captain Picard", "Captain Kirk", "Captain Sisko", "Captain Janeway"] }
+      ],
+      600: [
+        { q: "In which TOS episode does the mirror universe first appear, with goatee-Spock and an evil Federation?", choices: ["'Mirror, Mirror'", "'Amok Time'", "'The Trouble with Tribbles'", "'The Naked Time'"] },
+        { q: "Who is the Grand Nagus of the Ferengi Alliance during most of Deep Space Nine?", choices: ["Zek", "Quark", "Brunt", "Rom"] },
+        { q: "The Bajoran religion is centred on prophet-like beings that are revealed to actually be…?", choices: ["Wormhole aliens", "The Founders", "Time-displaced Vulcans", "The Q Continuum"] },
+        { q: "Who is the chief engineer of USS Voyager?", choices: ["B'Elanna Torres", "Geordi La Forge", "Trip Tucker", "Miles O'Brien"] },
+        { q: "What is the name of the extradimensional realm inhabited by Q?", choices: ["The Q Continuum", "The Nexus", "Subspace", "The Mirror Universe"] }
+      ],
+      800: [
+        { q: "Captain Benjamin Sisko's son aboard Deep Space Nine is named?", choices: ["Jake", "Wesley", "Cassidy", "Ben Jr"] },
+        { q: "The shape-shifting species at the head of the Dominion is called?", choices: ["The Founders (a.k.a. the Changelings)", "The Vorta", "The Jem'Hadar", "The Cardassians"] },
+        { q: "In which Star Trek film does the Borg Queen make her first appearance?", choices: ["First Contact", "Generations", "Insurrection", "Nemesis"] },
+        { q: "Who is the morale officer, cook, and resident foodie aboard USS Voyager?", choices: ["Neelix", "Tuvok", "Chakotay", "Kes"] },
+        { q: "The Khitomer Massacre, frequently referenced in TNG, was perpetrated by which species against which?", choices: ["Romulans against Klingons", "Klingons against the Federation", "Cardassians against Bajorans", "Borg against the Federation"] }
+      ],
+      1000: [
+        { q: "In TNG's 'Unification' two-parter, which legendary character is found working secretly on Romulus?", choices: ["Ambassador Spock", "Sarek", "Captain Kirk", "Mr Scott"] },
+        { q: "What species is Voyager's chief of security, Tuvok?", choices: ["Vulcan", "Romulan", "Bolian", "Tellarite"] },
+        { q: "'Resistance is futile' was first uttered (canonically) by which character?", choices: ["Locutus of Borg (assimilated Picard)", "The Borg Queen", "Seven of Nine", "An unnamed drone in 'Q Who'"] },
+        { q: "In the mirror universe of Deep Space Nine, Kira Nerys' counterpart is known by what title?", choices: ["The Intendant", "General Kira", "Captain Kira", "Mirror Kira"] },
+        { q: "Which actor has portrayed the trickster-like entity Q across multiple Star Trek series?", choices: ["John de Lancie", "Patrick Stewart", "Brent Spiner", "Jonathan Frakes"] }
+      ]
+    }
+  },
+
+  // ============== DISNEY ==============
+  ds: {
+    round1: {
+      100: [
+        { q: "What is the name of Mickey Mouse's pet dog?", choices: ["Pluto", "Goofy", "Tramp", "Bolt"] },
+        { q: "What is the name of the big-eared elephant in Disney's 1941 animated film who learns to fly?", choices: ["Dumbo", "Bambi", "Toby", "Babar"] },
+        { q: "In Cinderella, what does the Fairy Godmother turn into Cinderella's carriage?", choices: ["A pumpkin", "A turnip", "A sleigh", "A boat"] },
+        { q: "Which Disney short, released in 1928, is widely considered Mickey Mouse's debut with synchronized sound?", choices: ["Steamboat Willie", "Plane Crazy", "The Sorcerer's Apprentice", "Snow White"] },
+        { q: "What colour is the bodice of Snow White's iconic dress?", choices: ["Blue (with a yellow skirt)", "Red", "Green", "Purple"] }
+      ],
+      200: [
+        { q: "In The Lion King, who is Simba's villainous uncle?", choices: ["Scar", "Mufasa", "Zazu", "Shenzi"] },
+        { q: "Which Disney princess longs to be human and trades her voice to do so?", choices: ["Ariel", "Pocahontas", "Moana", "Belle"] },
+        { q: "Which Disney princess pricks her finger on the spindle of a spinning wheel?", choices: ["Aurora (Sleeping Beauty)", "Cinderella", "Snow White", "Rapunzel"] },
+        { q: "Who provided the voice of the Genie in Disney's 1992 Aladdin?", choices: ["Robin Williams", "Eddie Murphy", "James Earl Jones", "Jeff Goldblum"] },
+        { q: "Mufasa, the Lion King, is whose father?", choices: ["Simba's", "Scar's", "Kovu's", "Pumbaa's"] }
+      ],
+      300: [
+        { q: "What is the name of the kingdom ruled by Elsa in Frozen?", choices: ["Arendelle", "Corona", "Agrabah", "DunBroch"] },
+        { q: "Which film features Belle and a transformed prince often nicknamed 'the Beast' (officially Prince Adam in some materials)?", choices: ["Beauty and the Beast", "The Little Mermaid", "Cinderella", "Tangled"] },
+        { q: "What is the title of Pixar's 1995 release, generally considered the first fully computer-animated feature film?", choices: ["Toy Story", "A Bug's Life", "Monsters, Inc.", "The Incredibles"] },
+        { q: "Who is the British colonist that Pocahontas falls for in the 1995 Disney film?", choices: ["John Smith", "John Rolfe", "Captain Cook", "James Cook"] },
+        { q: "What is the name of Goofy's teenaged son, featured in 'A Goofy Movie' and 'Goof Troop'?", choices: ["Max", "PJ", "Spike", "Hugo"] }
+      ],
+      400: [
+        { q: "In Disney's Aladdin, what is the name of Jasmine's pet tiger?", choices: ["Rajah", "Shere Khan", "Sahara", "Sultan"] },
+        { q: "In what year did Disneyland (in Anaheim, California) open to the public?", choices: ["1955", "1965", "1971", "1923"] },
+        { q: "Who provided the voice of Mickey Mouse in his earliest cartoons?", choices: ["Walt Disney himself", "Wayne Allwine", "Bret Iwan", "Jimmy MacDonald"] },
+        { q: "Who is the human main antagonist in the original Toy Story (1995)?", choices: ["Sid Phillips", "Lotso", "Stinky Pete", "Al McWhiggin"] },
+        { q: "Disney's 2010 animated film 'Tangled' is based on which fairy tale?", choices: ["Rapunzel", "Cinderella", "Snow White", "Beauty and the Beast"] }
+      ],
+      500: [
+        { q: "What was Disney's first full-length animated feature film, released in 1937?", choices: ["Snow White and the Seven Dwarfs", "Pinocchio", "Cinderella", "Bambi"] },
+        { q: "In Lilo & Stitch, the little blue alien creature is named?", choices: ["Stitch", "Wall-E", "Pleakley", "Jumba"] },
+        { q: "Which Disney film centres on a princess whose extremely long hair has magical healing powers?", choices: ["Tangled", "Frozen", "Brave", "Moana"] },
+        { q: "Who is the villain in The Princess and the Frog?", choices: ["Dr Facilier", "Maleficent", "Gaston", "Mother Gothel"] },
+        { q: "In Moana, what is the name of the trickster demigod the heroine sails to find?", choices: ["Maui", "Hercules", "Tamatoa", "Te Fiti"] }
+      ]
+    },
+    round2: {
+      200: [
+        { q: "What is the name of Ariel's crab companion in The Little Mermaid?", choices: ["Sebastian", "Flounder", "Scuttle", "Triton"] },
+        { q: "What is the name of the enchanted clock in Beauty and the Beast?", choices: ["Cogsworth", "Lumière", "Chip", "Mrs Potts"] },
+        { q: "Who is Pinocchio's officially-appointed conscience in the 1940 Disney film?", choices: ["Jiminy Cricket", "Figaro", "Pongo", "Tinker Bell"] },
+        { q: "What is the name of the female robot Wall-E falls in love with?", choices: ["EVE", "Mo", "Auto", "GO-4"] },
+        { q: "Who is the female lead of Disney's animated Mulan (1998)?", choices: ["Fa Mulan (Hua Mulan)", "Tiana", "Pocahontas", "Jasmine"] }
+      ],
+      400: [
+        { q: "In what year did Walt and Roy Disney co-found their cartoon studio?", choices: ["1923", "1928", "1937", "1955"] },
+        { q: "Who is the sea-witch villain of The Little Mermaid?", choices: ["Ursula", "Maleficent", "Cruella de Vil", "The Evil Queen"] },
+        { q: "Which character is considered the first official Disney Princess (per the company's branding)?", choices: ["Snow White", "Cinderella", "Aurora", "Ariel"] },
+        { q: "Who was Disney's CEO from 2005 to 2020 (and again from late 2022)?", choices: ["Bob Iger", "Michael Eisner", "Roy E. Disney", "Bob Chapek"] },
+        { q: "Who is the dalmatian-coat-coveting villain of 101 Dalmatians?", choices: ["Cruella de Vil", "Maleficent", "Ursula", "Mother Gothel"] }
+      ],
+      600: [
+        { q: "In Beauty and the Beast, what is the name of the teacup who is Mrs Potts' son?", choices: ["Chip", "Cogsworth", "Lumière", "Pip"] },
+        { q: "What is the name of Aladdin's mischievous pet monkey?", choices: ["Abu", "Rajah", "Iago", "Genie"] },
+        { q: "In which year was Pixar Animation Studios formally founded (under that name, after spinning out of Lucasfilm)?", choices: ["1986", "1995", "1979", "2006"] },
+        { q: "Which 2003 Pixar film follows a clownfish father searching for his lost son?", choices: ["Finding Nemo", "Finding Dory", "Shark Tale", "Happy Feet"] },
+        { q: "Who supervised direction of Snow White and the Seven Dwarfs (1937)?", choices: ["David Hand", "Walt Disney", "Ub Iwerks", "Wilfred Jackson"] }
+      ],
+      800: [
+        { q: "Who is the villain who curses Princess Aurora in Sleeping Beauty?", choices: ["Maleficent", "Cruella de Vil", "The Evil Queen", "Ursula"] },
+        { q: "In The Lion King, what does the Swahili phrase 'Hakuna Matata' literally mean?", choices: ["No worries", "Forever family", "Welcome home", "Never give up"] },
+        { q: "Disney's Frozen (2013) is loosely based on which Hans Christian Andersen fairy tale?", choices: ["The Snow Queen", "The Little Mermaid", "The Ugly Duckling", "Thumbelina"] },
+        { q: "In Pixar's Up, what is Carl Fredricksen's lifelong dream destination for his balloon-borne house?", choices: ["Paradise Falls", "Niagara Falls", "The Grand Canyon", "Patagonia"] },
+        { q: "Which Disney CEO took over from Bob Iger in 2020, only to be replaced when Iger returned in late 2022?", choices: ["Bob Chapek", "Michael Eisner", "Ron Miller", "Tom Staggs"] }
+      ],
+      1000: [
+        { q: "Which of these is NOT one of the seven dwarfs from Snow White?", choices: ["Stinky", "Doc", "Bashful", "Sneezy"] },
+        { q: "What was Walt Disney's middle name?", choices: ["Elias", "Henry", "Charles", "Edward"] },
+        { q: "Disney's first feature film headlined by a Native American princess was?", choices: ["Pocahontas (1995)", "Mulan", "The Princess and the Frog", "Moana"] },
+        { q: "Which animator and longtime collaborator of Walt Disney is widely credited as co-designing Mickey Mouse?", choices: ["Ub Iwerks", "Hayao Miyazaki", "Floyd Gottfredson", "Burny Mattinson"] },
+        { q: "The Oscar-winning song 'Let It Go' is from which Disney film?", choices: ["Frozen", "Tangled", "Brave", "Moana"] }
+      ]
+    }
+  }
+};
+
+// ============================================================
+//   FINAL-WAGER POOL (crossover trivia)
+// ============================================================
+const FINAL_BANK = [
+  {
     category: "Crossover Trivia",
     q: "In 2012, The Walt Disney Company acquired a major science-fiction franchise for over $4 billion — instantly giving them control of a series often pitted against Star Trek in fan rivalries. Which franchise did Disney acquire?",
     choices: ["Star Wars (Lucasfilm)", "Marvel Comics", "Pixar Animation", "20th Century Fox"]
+  },
+  {
+    category: "Crossover Trivia",
+    q: "Legendary composer John Williams wrote the iconic film scores for both Star Wars AND which of these other major franchises?",
+    choices: ["Harry Potter (the first three films)", "Star Trek", "The Disney Renaissance animated films", "Fantastic Beasts"]
+  },
+  {
+    category: "Crossover Trivia",
+    q: "In 2019, Disney completed its acquisition of which major film studio, gaining the X-Men, Deadpool and Avatar franchises in the process?",
+    choices: ["21st Century Fox", "Warner Bros.", "MGM Holdings", "Sony Pictures"]
+  },
+  {
+    category: "Crossover Trivia",
+    q: "Sir Patrick Stewart famously played Captain Jean-Luc Picard in Star Trek: The Next Generation. Which iconic mutant did he portray in another franchise now owned by Disney?",
+    choices: ["Professor Charles Xavier", "Magneto", "Wolverine", "Cyclops"]
+  },
+  {
+    category: "Crossover Trivia",
+    q: "The Mandalorian, a hit Disney+ original series, is set in which Disney-owned franchise?",
+    choices: ["Star Wars", "The Marvel Cinematic Universe", "Indiana Jones", "Pirates of the Caribbean"]
+  },
+  {
+    category: "Crossover Trivia",
+    q: "Which of these actors appears in BOTH the Harry Potter and Star Wars franchises (Star Wars now under Disney)?",
+    choices: ["Warwick Davis (Filius Flitwick & Wicket the Ewok)", "Daniel Radcliffe", "Patrick Stewart", "Sir Ian McKellen"]
+  },
+  {
+    category: "Crossover Trivia",
+    q: "Jude Law, who plays the young Albus Dumbledore in the Fantastic Beasts films, also portrayed Kree warrior Yon-Rogg in which Disney/Marvel film?",
+    choices: ["Captain Marvel", "Doctor Strange", "Black Widow", "Avengers: Endgame"]
+  },
+  {
+    category: "Crossover Trivia",
+    q: "Which year saw Disney both release the smash hit 'Frozen' AND begin its first full year owning the Star Wars franchise?",
+    choices: ["2013", "2012", "2014", "2015"]
   }
-};
+];
+
+// ============================================================
+//   pickGameQuestions — random selection per game session
+// ============================================================
+function pickGameQuestions() {
+  const r1Tiers = [100, 200, 300, 400, 500];
+  const r2Tiers = [200, 400, 600, 800, 1000];
+  const catKeys = ['hp', 'fb', 'st', 'ds'];
+  const out = { round1: {}, round2: {}, final: null };
+  for (const k of catKeys) {
+    const meta = CATEGORIES[k];
+    out.round1[k] = { label: meta.label, cls: meta.cls, tiers: {} };
+    out.round2[k] = { label: meta.label, cls: meta.cls, tiers: {} };
+    for (const t of r1Tiers) {
+      const pool = QUESTION_BANK[k].round1[t];
+      out.round1[k].tiers[t] = pool[Math.floor(Math.random() * pool.length)];
+    }
+    for (const t of r2Tiers) {
+      const pool = QUESTION_BANK[k].round2[t];
+      out.round2[k].tiers[t] = pool[Math.floor(Math.random() * pool.length)];
+    }
+  }
+  out.final = FINAL_BANK[Math.floor(Math.random() * FINAL_BANK.length)];
+  return out;
+}
 
 // ============================================================
 //   UTILITIES
@@ -987,7 +1319,8 @@ function initHost() {
     current: null,   // {catKey, value, q, shuffledChoices, correctNewIdx}
     lockedOut: new Set(),  // player nums (1 or 2) locked out from current Q
     finalWagers: { 1: null, 2: null },
-    finalLockedOut: new Set()
+    finalLockedOut: new Set(),
+    gameQuestions: pickGameQuestions()  // randomized per game from QUESTION_BANK
   };
   window._host = host; // for debug
 
@@ -1146,13 +1479,11 @@ function updateLobby(host) {
 function buildHostBoard(host) {
   const board = $('board');
   board.innerHTML = '';
-  const roundKey = host.round === 1 ? 'round1' : 'round2';
-  const cats = QUESTIONS[roundKey];
   const catKeys = ['hp', 'fb', 'st', 'ds'];
   catKeys.forEach(k => {
     const h = document.createElement('div');
-    h.className = `cat-header ${cats[k].cls}`;
-    h.textContent = cats[k].label;
+    h.className = `cat-header ${CATEGORIES[k].cls}`;
+    h.textContent = CATEGORIES[k].label;
     board.appendChild(h);
   });
   const values = host.round === 1 ? [100,200,300,400,500] : [200,400,600,800,1000];
@@ -1208,7 +1539,7 @@ function broadcastBoard(host) {
 
 // ---------- Timing constants ----------
 const READ_MS = 15000;
-const BUZZ_WINDOW_MS = 15000;  // how long buzz window stays open if nobody buzzes
+const BUZZ_WINDOW_MS = 7000;  // how long buzz window stays open if nobody buzzes
 const ANSWER_MS = 10000;
 
 // ---------- Host timer helpers ----------
@@ -1263,7 +1594,7 @@ function renderHostPhaseUI(host) {
 
 function openQuestionHost(host, catKey, value) {
   const roundKey = host.round === 1 ? 'round1' : 'round2';
-  const cat = QUESTIONS[roundKey][catKey];
+  const cat = host.gameQuestions[roundKey][catKey];
   const tile = cat.tiers[value];
   const { shuffled, indexMap } = shuffleWithIndex(tile.choices);
   const correctNewIdx = indexMap.indexOf(0);
@@ -1552,7 +1883,7 @@ function startFinalHost(host) {
   showHostScreen('final');
   $('host-final-wager').classList.remove('hidden');
   $('host-final-question').classList.add('hidden');
-  $('hf-cat-1').textContent = QUESTIONS.final.category;
+  $('hf-cat-1').textContent = host.gameQuestions.final.category;
 
   // Send wager request to each player with their max
   for (const slot of [1, 2]) {
@@ -1581,7 +1912,7 @@ function handleFinalWager(host, slot, amount) {
 }
 
 function sendFinalQuestion(host) {
-  const { shuffled, indexMap } = shuffleWithIndex(QUESTIONS.final.choices);
+  const { shuffled, indexMap } = shuffleWithIndex(host.gameQuestions.final.choices);
   const correctNewIdx = indexMap.indexOf(0);
   host.current = { isFinal: true, shuffled, correctNewIdx };
   host.finalAnswers = { 1: null, 2: null };
@@ -1590,8 +1921,8 @@ function sendFinalQuestion(host) {
   // Switch host view
   $('host-final-wager').classList.add('hidden');
   $('host-final-question').classList.remove('hidden');
-  $('hf-cat-2').textContent = QUESTIONS.final.category;
-  $('hfq-text').textContent = QUESTIONS.final.q;
+  $('hf-cat-2').textContent = host.gameQuestions.final.category;
+  $('hfq-text').textContent = host.gameQuestions.final.q;
   renderHostChoices('hfq-choices', shuffled, null, null);
   $('hfq-status').textContent = `Players: lock in your final answer!`;
 
@@ -1600,9 +1931,9 @@ function sendFinalQuestion(host) {
     if (!p.conn) continue;
     p.conn.send({
       type: 'question',
-      cat: QUESTIONS.final.category,
+      cat: host.gameQuestions.final.category,
       value: host.finalWagers[slot],
-      q: QUESTIONS.final.q,
+      q: host.gameQuestions.final.q,
       choices: shuffled,
       isFinal: true
     });
@@ -1899,8 +2230,6 @@ function renderPlayerBoard(player, data) {
   $('p-pick-title').textContent = `Round ${data.round}: your turn — pick a tile`;
   const b = $('p-board');
   b.innerHTML = '';
-  const roundKey = data.round === 1 ? 'round1' : 'round2';
-  const cats = QUESTIONS[roundKey];
   const catKeys = ['hp', 'fb', 'st', 'ds'];
   const values = data.round === 1 ? [100,200,300,400,500] : [200,400,600,800,1000];
   const used = new Set(data.usedTiles);
@@ -1909,8 +2238,8 @@ function renderPlayerBoard(player, data) {
     const row = document.createElement('div');
     row.className = 'cat-row';
     const label = document.createElement('div');
-    label.className = `cat-label ${cats[k].cls}`;
-    label.textContent = cats[k].label;
+    label.className = `cat-label ${CATEGORIES[k].cls}`;
+    label.textContent = CATEGORIES[k].label;
     row.appendChild(label);
     const tileRow = document.createElement('div');
     tileRow.className = 'tile-row';
