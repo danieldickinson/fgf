@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fandom Clash — A Two-Player Quiz</title>
+<style>
+  :root {
+    --bg-1: #0a0e27;
+    --bg-2: #1a1a3e;
+    --gold: #f5c518;
+    --gold-dim: #b8941a;
+    --accent: #6c4ce8;
+    --p1: #d62828;
+    --p2: #2a9d8f;
+    --text: #f0f0f5;
+    --text-dim: #9090a8;
+    --tile: #1f2454;
+    --tile-hover: #2d3478;
+    --tile-used: #15172d;
+    --hp: #740001;
+    --fb: #5d4037;
+    --st: #003b6f;
+    --ds: #4a148c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: 'Trebuchet MS', 'Helvetica Neue', sans-serif;
+    background: radial-gradient(ellipse at top, var(--bg-2), var(--bg-1));
+    color: var(--text);
+    overflow: hidden;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  #app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px;
+    overflow: hidden;
+  }
+
+  /* ---------- HEADER / SCOREBOARD ---------- */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 16px;
+  }
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-shadow: 0 2px 6px rgba(245, 197, 24, 0.4);
+    cursor: pointer;
+  }
+  .round-badge {
+    background: var(--accent);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .scoreboard {
+    display: flex;
+    gap: 14px;
+  }
+  .player-card {
+    background: var(--bg-2);
+    border: 2px solid transparent;
+    padding: 8px 18px;
+    border-radius: 10px;
+    min-width: 180px;
+    text-align: center;
+    transition: all 0.25s;
+  }
+  .player-card.active {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(245, 197, 24, 0.5);
+    transform: translateY(-2px);
+  }
+  .player-card.p1 { border-left: 5px solid var(--p1); }
+  .player-card.p2 { border-left: 5px solid var(--p2); }
+  .player-name {
+    font-size: 14px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .player-score {
+    font-size: 26px;
+    font-weight: bold;
+    color: var(--gold);
+    margin-top: 2px;
+  }
+  .player-score.negative { color: #ff6b6b; }
+
+  /* ---------- SCREENS ---------- */
+  .screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .hidden { display: none !important; }
+
+  /* ---------- WELCOME SCREEN ---------- */
+  #welcome-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 24px;
+  }
+  .big-title {
+    font-size: 72px;
+    color: var(--gold);
+    text-shadow: 0 4px 24px rgba(245, 197, 24, 0.6);
+    letter-spacing: 6px;
+    margin-bottom: 0;
+  }
+  .subtitle {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  .category-icons {
+    display: flex;
+    gap: 24px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .cat-icon {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--bg-2);
+    border: 1px solid var(--accent);
+  }
+  .name-inputs {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .name-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .name-input-group label {
+    color: var(--text-dim);
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .name-input-group input {
+    background: var(--bg-2);
+    border: 2px solid var(--accent);
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 18px;
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+    font-family: inherit;
+  }
+  .name-input-group.p1 input { border-color: var(--p1); }
+  .name-input-group.p2 input { border-color: var(--p2); }
+  .name-input-group input:focus { outline: none; box-shadow: 0 0 12px currentColor; }
+
+  /* ---------- BOARD ---------- */
+  #board-screen {
+    gap: 12px;
+  }
+  .board {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto repeat(5, 1fr);
+    gap: 8px;
+    min-height: 0;
+  }
+  .cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 16px;
+    color: white;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);
+  }
+  .cat-hp { background: linear-gradient(135deg, var(--hp), #a72020); }
+  .cat-fb { background: linear-gradient(135deg, var(--fb), #8d6e63); }
+  .cat-st { background: linear-gradient(135deg, var(--st), #1976d2); }
+  .cat-ds { background: linear-gradient(135deg, var(--ds), #7b1fa2); }
+
+  .tile {
+    background: var(--tile);
+    border: none;
+    color: var(--gold);
+    font-size: 36px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  }
+  .tile:hover:not(.used) {
+    background: var(--tile-hover);
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(108, 76, 232, 0.4);
+  }
+  .tile.used {
+    background: var(--tile-used);
+    color: transparent;
+    cursor: default;
+  }
+
+  /* ---------- QUESTION SCREEN ---------- */
+  #question-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  .question-cat {
+    font-size: 14px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .question-value {
+    font-size: 36px;
+    color: var(--gold);
+    font-weight: bold;
+  }
+  .question-text {
+    font-size: 32px;
+    line-height: 1.5;
+    max-width: 1000px;
+    color: var(--text);
+    padding: 30px 20px;
+    background: var(--bg-2);
+    border-radius: 12px;
+    border-left: 6px solid var(--gold);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .turn-indicator {
+    font-size: 18px;
+    color: var(--gold);
+  }
+  .turn-indicator b { color: var(--text); }
+  .action-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    color: white;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
+  .btn-reveal { background: var(--accent); }
+  .btn-p1 { background: var(--p1); }
+  .btn-p2 { background: var(--p2); }
+  .btn-correct { background: #2a9d8f; }
+  .btn-wrong { background: #e63946; }
+  .btn-skip { background: #555; }
+  .btn-primary { background: var(--gold); color: #1a1a3e; }
+  .btn-secondary { background: var(--bg-2); border: 2px solid var(--accent); }
+
+  /* ---------- AUDIO CONTROLS ---------- */
+  .audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 10px;
+  }
+  .icon-btn {
+    background: var(--bg-2);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .icon-btn:hover { background: var(--accent); transform: scale(1.08); }
+  .icon-btn.muted { opacity: 0.5; border-color: var(--text-dim); }
+  .volume-slider {
+    width: 70px;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+
+  .answer-box {
+    font-size: 28px;
+    color: var(--gold);
+    padding: 18px 24px;
+    background: rgba(245, 197, 24, 0.1);
+    border-radius: 8px;
+    border: 2px dashed var(--gold);
+    max-width: 900px;
+  }
+  .answer-box .label {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .scoring-prompt {
+    font-size: 18px;
+    color: var(--text);
+    margin-top: 4px;
+  }
+  .buzz-prompt {
+    font-size: 22px;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* ---------- FINAL ROUND ---------- */
+  #final-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+    padding: 30px;
+  }
+  .final-title {
+    font-size: 48px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-shadow: 0 4px 16px rgba(245, 197, 24, 0.5);
+  }
+  .final-cat {
+    font-size: 24px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .wager-row {
+    display: flex;
+    gap: 30px;
+    margin: 12px 0;
+  }
+  .wager-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .wager-input-group input {
+    background: var(--bg-2);
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    padding: 10px 14px;
+    font-size: 22px;
+    border-radius: 8px;
+    width: 160px;
+    text-align: center;
+    font-family: inherit;
+    font-weight: bold;
+  }
+  .wager-input-group input:focus { outline: none; }
+  .wager-input-group .max { font-size: 12px; color: var(--text-dim); }
+
+  /* ---------- END SCREEN ---------- */
+  #end-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+  }
+  .winner-banner {
+    font-size: 64px;
+    color: var(--gold);
+    text-shadow: 0 4px 24px rgba(245, 197, 24, 0.7);
+    letter-spacing: 4px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  .final-scores {
+    display: flex;
+    gap: 40px;
+    margin: 20px 0;
+  }
+  .final-score-card {
+    background: var(--bg-2);
+    padding: 24px 40px;
+    border-radius: 12px;
+    border: 2px solid var(--accent);
+  }
+  .final-score-card.winner {
+    border-color: var(--gold);
+    box-shadow: 0 0 32px rgba(245, 197, 24, 0.4);
+  }
+  .final-score-card .name { font-size: 22px; color: var(--text); }
+  .final-score-card .score { font-size: 48px; color: var(--gold); font-weight: bold; }
+
+  /* fade in for screens */
+  .screen { animation: fadeIn 0.3s; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* small responsive tweaks */
+  @media (max-width: 900px) {
+    .big-title { font-size: 48px; }
+    .question-text { font-size: 22px; }
+    .tile { font-size: 22px; }
+    .cat-header { font-size: 12px; letter-spacing: 1px; }
+    .player-card { min-width: 130px; padding: 6px 12px; }
+    .player-score { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="main-header" class="hidden">
+    <div>
+      <span class="title" id="home-link">⚡ FANDOM CLASH</span>
+      <span class="round-badge" id="round-badge">Round 1</span>
+    </div>
+    <div class="scoreboard">
+      <div class="player-card p1" id="p1-card">
+        <div class="player-name" id="p1-name-display">Player 1</div>
+        <div class="player-score" id="p1-score">$0</div>
+      </div>
+      <div class="player-card p2" id="p2-card">
+        <div class="player-name" id="p2-name-display">Player 2</div>
+        <div class="player-score" id="p2-score">$0</div>
+      </div>
+      <div class="audio-controls">
+        <button class="icon-btn" id="mute-btn" title="Mute / unmute">🔊</button>
+        <input class="volume-slider" id="volume-slider" type="range" min="0" max="100" value="50" title="Volume">
+      </div>
+    </div>
+  </header>
+
+  <!-- WELCOME -->
+  <div id="welcome-screen" class="screen">
+    <div class="big-title">⚡ FANDOM CLASH</div>
+    <div class="subtitle">A two-player trivia showdown across four legendary universes. Pick a category, claim the points, win bragging rights forever.</div>
+    <div class="category-icons">
+      <div class="cat-icon">🪄 Harry Potter</div>
+      <div class="cat-icon">🦄 Fantastic Beasts</div>
+      <div class="cat-icon">🖖 Star Trek</div>
+      <div class="cat-icon">🏰 Disney</div>
+    </div>
+    <div class="name-inputs">
+      <div class="name-input-group p1">
+        <label>Player 1</label>
+        <input id="p1-input" type="text" maxlength="14" placeholder="Name…" value="Player 1">
+      </div>
+      <div class="name-input-group p2">
+        <label>Player 2</label>
+        <input id="p2-input" type="text" maxlength="14" placeholder="Name…" value="Player 2">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="start-btn" style="margin-top: 20px;">Begin the Clash</button>
+    <div style="color: var(--text-dim); font-size: 13px; margin-top: 16px; max-width: 700px; line-height: 1.6;">
+      <b>How it works:</b> Players take turns picking tiles. Whoever buzzes in first answers — if correct, win the points and pick next; if wrong, lose the points and the opponent gets a steal attempt. Round 2 values double. Then comes the Final Wager.
+    </div>
+  </div>
+
+  <!-- BOARD -->
+  <div id="board-screen" class="screen hidden">
+    <div class="board" id="board"></div>
+    <div style="text-align: center; padding: 8px; color: var(--text-dim); font-size: 14px;">
+      <span id="picker-prompt"><b style="color: var(--gold);">Player 1</b>, pick a tile.</span>
+    </div>
+  </div>
+
+  <!-- QUESTION -->
+  <div id="question-screen" class="screen hidden">
+    <div>
+      <div class="question-cat" id="q-category"></div>
+      <div class="question-value" id="q-value"></div>
+    </div>
+    <div class="question-text" id="q-text"></div>
+
+    <div id="buzz-stage">
+      <div class="buzz-prompt">First to buzz in — who knows it?</div>
+      <div class="action-buttons" style="margin-top: 12px;">
+        <button class="btn btn-p1" id="buzz-p1">🔔 <span id="buzz-p1-name">Player 1</span> buzzes</button>
+        <button class="btn btn-p2" id="buzz-p2">🔔 <span id="buzz-p2-name">Player 2</span> buzzes</button>
+        <button class="btn btn-skip" id="buzz-skip">Neither — skip</button>
+      </div>
+    </div>
+
+    <div id="answer-stage" class="hidden" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+      <div class="turn-indicator"><b id="answering-name"></b> is answering…</div>
+      <button class="btn btn-reveal" id="reveal-btn">Reveal Answer</button>
+      <div class="answer-box hidden" id="answer-box">
+        <span class="label">Answer</span>
+        <div id="q-answer"></div>
+      </div>
+      <div class="scoring-prompt hidden" id="scoring-prompt">Did <b id="scoring-name"></b> get it right?</div>
+      <div class="action-buttons hidden" id="scoring-buttons">
+        <button class="btn btn-correct" id="correct-btn">✓ Correct</button>
+        <button class="btn btn-wrong" id="wrong-btn">✗ Wrong</button>
+      </div>
+    </div>
+
+    <div id="skip-stage" class="hidden">
+      <button class="btn btn-reveal" id="skip-reveal-btn">Reveal Answer</button>
+      <div class="answer-box hidden" id="skip-answer-box" style="margin-top: 12px;">
+        <span class="label">Answer</span>
+        <div id="skip-q-answer"></div>
+      </div>
+      <button class="btn btn-secondary hidden" id="skip-continue-btn" style="margin-top: 12px;">Back to Board</button>
+    </div>
+  </div>
+
+  <!-- FINAL ROUND -->
+  <div id="final-screen" class="screen hidden">
+    <div id="final-wager-stage">
+      <div class="final-title">⭐ FINAL WAGER ⭐</div>
+      <div class="final-cat">Category: <span id="final-cat-display"></span></div>
+      <div style="color: var(--text-dim); max-width: 600px; line-height: 1.5; margin-top: 16px;">
+        Each player secretly wagers any amount from $0 up to their current score (minimum $0 if you're in the negatives). Get the question right to gain the wager; wrong, and you lose it.
+      </div>
+      <div class="wager-row">
+        <div class="wager-input-group">
+          <label style="color: var(--p1); font-weight: bold;" id="wager-p1-label">Player 1's Wager</label>
+          <input id="wager-p1" type="number" min="0" value="0">
+          <div class="max">Max: $<span id="wager-p1-max">0</span></div>
+        </div>
+        <div class="wager-input-group">
+          <label style="color: var(--p2); font-weight: bold;" id="wager-p2-label">Player 2's Wager</label>
+          <input id="wager-p2" type="number" min="0" value="0">
+          <div class="max">Max: $<span id="wager-p2-max">0</span></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="lock-wagers-btn">Lock Wagers & Show Question</button>
+    </div>
+
+    <div id="final-question-stage" class="hidden" style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+      <div class="final-cat" id="final-cat-display-2"></div>
+      <div class="question-text" id="final-q-text"></div>
+      <div style="color: var(--text-dim); font-size: 14px;">Discuss your answers, then reveal.</div>
+      <button class="btn btn-reveal" id="final-reveal-btn">Reveal Answer</button>
+      <div class="answer-box hidden" id="final-answer-box">
+        <span class="label">Answer</span>
+        <div id="final-q-answer"></div>
+      </div>
+      <div class="hidden" id="final-scoring" style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div class="scoring-prompt">Mark who got it right:</div>
+        <div class="action-buttons">
+          <button class="btn btn-p1" id="final-p1-correct">✓ <span id="final-p1-name"></span> correct</button>
+          <button class="btn btn-p1" style="opacity: 0.5;" id="final-p1-wrong">✗ <span id="final-p1-name-2"></span> wrong</button>
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-p2" id="final-p2-correct">✓ <span id="final-p2-name"></span> correct</button>
+          <button class="btn btn-p2" style="opacity: 0.5;" id="final-p2-wrong">✗ <span id="final-p2-name-2"></span> wrong</button>
+        </div>
+        <button class="btn btn-primary hidden" id="final-done-btn" style="margin-top: 12px;">See Results →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- END -->
+  <div id="end-screen" class="screen hidden">
+    <div class="winner-banner" id="winner-banner">🏆 WINNER 🏆</div>
+    <div class="final-scores">
+      <div class="final-score-card" id="end-p1-card">
+        <div class="name" id="end-p1-name"></div>
+        <div class="score" id="end-p1-score"></div>
+      </div>
+      <div class="final-score-card" id="end-p2-card">
+        <div class="name" id="end-p2-name"></div>
+        <div class="score" id="end-p2-score"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="play-again-btn">Play Again</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//   QUESTION BANK
+//   Categories: hp = Harry Potter, fb = Fantastic Beasts,
+//               st = Star Trek, ds = Disney
+//   Each round has 5 difficulty tiers (point values).
+// ============================================================
+const QUESTIONS = {
+  round1: {
+    hp: {
+      label: "Harry Potter",
+      cls: "cat-hp",
+      tiers: {
+        100: { q: "What is the name of Harry Potter's pet owl?", a: "Hedwig" },
+        200: { q: "Which house at Hogwarts is known for valuing bravery and chivalry?", a: "Gryffindor" },
+        300: { q: "What is the name of the half-giant who serves as Hogwarts' gamekeeper and Care of Magical Creatures professor?", a: "Rubeus Hagrid" },
+        400: { q: "What three objects make up the Deathly Hallows?", a: "The Elder Wand, the Resurrection Stone, and the Cloak of Invisibility" },
+        500: { q: "What is the incantation for the Patronus Charm?", a: "Expecto Patronum" }
+      }
+    },
+    fb: {
+      label: "Fantastic Beasts",
+      cls: "cat-fb",
+      tiers: {
+        100: { q: "What is the name of Newt Scamander's magically-expanded suitcase companion who loves shiny objects?", a: "Niffler" },
+        200: { q: "What profession is Newt Scamander known for? (One word.)", a: "Magizoologist" },
+        300: { q: "In which city does the first Fantastic Beasts film primarily take place?", a: "New York City" },
+        400: { q: "What is the name of the No-Maj baker who befriends Newt in the first film?", a: "Jacob Kowalski" },
+        500: { q: "What is the term used in America for a witch or wizard born to non-magical parents — and what's the name of America's magical governing body?", a: "No-Maj-born; the Magical Congress of the United States of America, or MACUSA" }
+      }
+    },
+    st: {
+      label: "Star Trek",
+      cls: "cat-st",
+      tiers: {
+        100: { q: "Complete this famous opening: 'Space: the final ______.'", a: "Frontier" },
+        200: { q: "What is the name of Captain Kirk's iconic starship?", a: "USS Enterprise (NCC-1701)" },
+        300: { q: "What is the home planet of Spock's father, Sarek?", a: "Vulcan" },
+        400: { q: "In The Next Generation, what is the name of the android serving as Operations Officer aboard the Enterprise-D?", a: "Lieutenant Commander Data" },
+        500: { q: "What four-word phrase, accompanied by a split-fingered salute, is the traditional Vulcan greeting?", a: "Live long and prosper" }
+      }
+    },
+    ds: {
+      label: "Disney",
+      cls: "cat-ds",
+      tiers: {
+        100: { q: "What is the name of Mickey Mouse's dog?", a: "Pluto" },
+        200: { q: "In The Lion King, what is the name of Simba's uncle and primary antagonist?", a: "Scar" },
+        300: { q: "What is the name of the kingdom ruled by Elsa in Frozen?", a: "Arendelle" },
+        400: { q: "In Disney's Aladdin, what is the name of Jasmine's pet tiger?", a: "Rajah" },
+        500: { q: "What was the very first full-length animated feature film released by Walt Disney Studios in 1937?", a: "Snow White and the Seven Dwarfs" }
+      }
+    }
+  },
+  round2: {
+    hp: {
+      label: "Harry Potter",
+      cls: "cat-hp",
+      tiers: {
+        200: { q: "What is the full name of the Hogwarts ghost known as 'Nearly Headless Nick'?", a: "Sir Nicholas de Mimsy-Porpington" },
+        400: { q: "Who killed Bellatrix Lestrange in the Battle of Hogwarts?", a: "Molly Weasley" },
+        600: { q: "What was the name of Tom Riddle's mother, who died shortly after giving birth?", a: "Merope Gaunt" },
+        800: { q: "What position did Dolores Umbridge hold at the Ministry of Magic before becoming the Hogwarts High Inquisitor?", a: "Senior Undersecretary to the Minister for Magic" },
+        1000: { q: "What are the names of the four founders of Hogwarts School of Witchcraft and Wizardry?", a: "Godric Gryffindor, Helga Hufflepuff, Rowena Ravenclaw, and Salazar Slytherin" }
+      }
+    },
+    fb: {
+      label: "Fantastic Beasts",
+      cls: "cat-fb",
+      tiers: {
+        200: { q: "What is the name of the dark wizard who is Newt Scamander's main adversary across the Fantastic Beasts films?", a: "Gellert Grindelwald" },
+        400: { q: "What is the name of the snake-like creature kept by Nagini in The Crimes of Grindelwald, who is herself a Maledictus?", a: "Nagini (she is the Maledictus, eventually becoming Voldemort's snake)" },
+        600: { q: "What is the name of the obscurus-hosting young man played by Ezra Miller in the Fantastic Beasts series?", a: "Credence Barebone (later revealed as Aurelius Dumbledore)" },
+        800: { q: "What enchanted object did Albus Dumbledore and Gellert Grindelwald create to make a blood pact preventing them from fighting each other?", a: "A blood pact pendant (or blood troth)" },
+        1000: { q: "Which large, serpentine, water-dwelling beast — long thought extinct — does Newt encounter in the Black Lake in The Secrets of Dumbledore, before riding it through underwater tunnels?", a: "The Manticore (in the film's underground sequence) — accept also: the qilin is the central creature of the film" }
+      }
+    },
+    st: {
+      label: "Star Trek",
+      cls: "cat-st",
+      tiers: {
+        200: { q: "What is the name of the deep space station that serves as the setting for Star Trek: Deep Space Nine?", a: "Deep Space Nine (formerly Terok Nor)" },
+        400: { q: "Who is the captain of the USS Voyager in Star Trek: Voyager?", a: "Captain Kathryn Janeway" },
+        600: { q: "What is the name of the Borg collective's most famous liberated drone, who joins the Voyager crew?", a: "Seven of Nine" },
+        800: { q: "What is the warp-drive-related material that powers most Federation starships, requiring careful matter/antimatter regulation?", a: "Dilithium (specifically dilithium crystals)" },
+        1000: { q: "What is the name of the Klingon Chancellor who signed the Khitomer Accords with the Federation, ending decades of hostility?", a: "Chancellor Gorkon" }
+      }
+    },
+    ds: {
+      label: "Disney",
+      cls: "cat-ds",
+      tiers: {
+        200: { q: "In The Little Mermaid, what is the name of Ariel's crab companion?", a: "Sebastian" },
+        400: { q: "What was the name of the company Walt Disney co-founded with his brother Roy in 1923?", a: "Disney Brothers Cartoon Studio (later The Walt Disney Company)" },
+        600: { q: "In Beauty and the Beast, what is the name of the teacup who is Mrs. Potts' son?", a: "Chip" },
+        800: { q: "What is the name of the villain in Disney's Sleeping Beauty who curses Princess Aurora?", a: "Maleficent" },
+        1000: { q: "Name the seven dwarfs from Snow White and the Seven Dwarfs.", a: "Doc, Grumpy, Happy, Sleepy, Bashful, Sneezy, and Dopey" }
+      }
+    }
+  },
+  final: {
+    category: "Crossover Trivia",
+    q: "Each of these four franchises features a character or being who serves as a wise mentor figure with white or silver hair and supernatural insight. Name one such mentor from each: Harry Potter, Fantastic Beasts, Star Trek (any series), and Disney's Star Wars.",
+    a: "Many acceptable answers — examples: Albus Dumbledore (HP), Albus Dumbledore as portrayed by Jude Law (Fantastic Beasts), Captain Picard or Ambassador Spock (Star Trek), Obi-Wan Kenobi or Yoda (Disney/Star Wars)"
+  }
+};
+
+// ============================================================
+//   GAME STATE
+// ============================================================
+const state = {
+  player1: { name: "Player 1", score: 0 },
+  player2: { name: "Player 2", score: 0 },
+  currentPicker: 1,      // 1 or 2 — who picks next tile
+  currentAnswerer: null, // 1 or 2 — who is currently answering
+  round: 1,
+  currentTile: null,     // {cat, value}
+  usedTiles: new Set(),  // "round-cat-value"
+  finalWagers: { p1: 0, p2: 0 },
+  finalResults: { p1: null, p2: null }
+};
+
+// ============================================================
+//   DOM REFS
+// ============================================================
+const $ = id => document.getElementById(id);
+const screens = {
+  welcome: $('welcome-screen'),
+  board: $('board-screen'),
+  question: $('question-screen'),
+  final: $('final-screen'),
+  end: $('end-screen')
+};
+const header = $('main-header');
+
+function showScreen(name) {
+  Object.values(screens).forEach(s => s.classList.add('hidden'));
+  screens[name].classList.remove('hidden');
+  if (name === 'welcome') header.classList.add('hidden');
+  else header.classList.remove('hidden');
+}
+
+function updateScores() {
+  $('p1-name-display').textContent = state.player1.name;
+  $('p2-name-display').textContent = state.player2.name;
+  const p1ScoreEl = $('p1-score');
+  const p2ScoreEl = $('p2-score');
+  p1ScoreEl.textContent = formatMoney(state.player1.score);
+  p2ScoreEl.textContent = formatMoney(state.player2.score);
+  p1ScoreEl.classList.toggle('negative', state.player1.score < 0);
+  p2ScoreEl.classList.toggle('negative', state.player2.score < 0);
+  $('p1-card').classList.toggle('active', state.currentPicker === 1);
+  $('p2-card').classList.toggle('active', state.currentPicker === 2);
+  $('round-badge').textContent = state.round === 3 ? 'Final Round' : `Round ${state.round}`;
+}
+
+function formatMoney(n) {
+  if (n < 0) return `-$${Math.abs(n)}`;
+  return `$${n}`;
+}
+
+// ============================================================
+//   WELCOME
+// ============================================================
+$('start-btn').addEventListener('click', () => {
+  const p1Name = $('p1-input').value.trim() || 'Player 1';
+  const p2Name = $('p2-input').value.trim() || 'Player 2';
+  state.player1.name = p1Name;
+  state.player2.name = p2Name;
+  $('buzz-p1-name').textContent = p1Name;
+  $('buzz-p2-name').textContent = p2Name;
+  updateScores();
+  buildBoard();
+  showScreen('board');
+});
+
+$('home-link').addEventListener('click', () => {
+  if (confirm('Return to start screen and reset the game?')) location.reload();
+});
+
+// ============================================================
+//   BOARD
+// ============================================================
+function buildBoard() {
+  const board = $('board');
+  board.innerHTML = '';
+  const roundKey = state.round === 1 ? 'round1' : 'round2';
+  const cats = QUESTIONS[roundKey];
+  const catKeys = ['hp', 'fb', 'st', 'ds'];
+
+  catKeys.forEach(catKey => {
+    const h = document.createElement('div');
+    h.className = `cat-header ${cats[catKey].cls}`;
+    h.textContent = cats[catKey].label;
+    board.appendChild(h);
+  });
+
+  const tierValues = state.round === 1 ? [100, 200, 300, 400, 500] : [200, 400, 600, 800, 1000];
+
+  for (const value of tierValues) {
+    for (const catKey of catKeys) {
+      const tile = document.createElement('button');
+      tile.className = 'tile';
+      tile.textContent = `$${value}`;
+      const id = `${state.round}-${catKey}-${value}`;
+      tile.dataset.id = id;
+      tile.dataset.cat = catKey;
+      tile.dataset.value = value;
+      if (state.usedTiles.has(id)) tile.classList.add('used');
+      tile.addEventListener('click', () => {
+        if (tile.classList.contains('used')) return;
+        openQuestion(catKey, value);
+      });
+      board.appendChild(tile);
+    }
+  }
+
+  updatePickerPrompt();
+}
+
+function updatePickerPrompt() {
+  const picker = state.currentPicker === 1 ? state.player1.name : state.player2.name;
+  const color = state.currentPicker === 1 ? 'var(--p1)' : 'var(--p2)';
+  $('picker-prompt').innerHTML = `<b style="color: ${color};">${picker}</b>, pick a tile.`;
+}
+
+// ============================================================
+//   QUESTION FLOW
+// ============================================================
+function openQuestion(catKey, value) {
+  const roundKey = state.round === 1 ? 'round1' : 'round2';
+  const cat = QUESTIONS[roundKey][catKey];
+  const tile = cat.tiers[value];
+  state.currentTile = { catKey, value, cat, tile };
+
+  $('q-category').textContent = cat.label;
+  $('q-value').textContent = `$${value}`;
+  $('q-text').textContent = tile.q;
+  $('q-answer').textContent = tile.a;
+  $('skip-q-answer').textContent = tile.a;
+
+  // Reset stages
+  $('buzz-stage').classList.remove('hidden');
+  $('answer-stage').classList.add('hidden');
+  $('skip-stage').classList.add('hidden');
+  $('answer-box').classList.add('hidden');
+  $('scoring-prompt').classList.add('hidden');
+  $('scoring-buttons').classList.add('hidden');
+  $('reveal-btn').classList.remove('hidden');
+  $('skip-answer-box').classList.add('hidden');
+  $('skip-continue-btn').classList.add('hidden');
+  $('skip-reveal-btn').classList.remove('hidden');
+
+  showScreen('question');
+}
+
+$('buzz-p1').addEventListener('click', () => startAnswering(1));
+$('buzz-p2').addEventListener('click', () => startAnswering(2));
+$('buzz-skip').addEventListener('click', () => {
+  $('buzz-stage').classList.add('hidden');
+  $('skip-stage').classList.remove('hidden');
+});
+
+function startAnswering(playerNum) {
+  state.currentAnswerer = playerNum;
+  const name = playerNum === 1 ? state.player1.name : state.player2.name;
+  $('answering-name').textContent = name;
+  $('scoring-name').textContent = name;
+  $('buzz-stage').classList.add('hidden');
+  $('answer-stage').classList.remove('hidden');
+  $('answer-box').classList.add('hidden');
+  $('scoring-prompt').classList.add('hidden');
+  $('scoring-buttons').classList.add('hidden');
+  $('reveal-btn').classList.remove('hidden');
+}
+
+$('reveal-btn').addEventListener('click', () => {
+  $('reveal-btn').classList.add('hidden');
+  $('answer-box').classList.remove('hidden');
+  $('scoring-prompt').classList.remove('hidden');
+  $('scoring-buttons').classList.remove('hidden');
+});
+
+$('correct-btn').addEventListener('click', () => {
+  const value = state.currentTile.value;
+  if (state.currentAnswerer === 1) state.player1.score += value;
+  else state.player2.score += value;
+  state.currentPicker = state.currentAnswerer; // winner picks next
+  finishTile();
+});
+
+$('wrong-btn').addEventListener('click', () => {
+  const value = state.currentTile.value;
+  if (state.currentAnswerer === 1) state.player1.score -= value;
+  else state.player2.score -= value;
+  // Offer steal to the other player if not already attempted
+  const otherPlayer = state.currentAnswerer === 1 ? 2 : 1;
+  const otherName = otherPlayer === 1 ? state.player1.name : state.player2.name;
+  const wantsSteal = confirm(`${otherName}, do you want to attempt a steal for $${value}?\n\nOK = Yes, attempt steal\nCancel = No, pass`);
+  if (wantsSteal) {
+    state.currentAnswerer = otherPlayer;
+    $('answering-name').textContent = otherName;
+    $('scoring-name').textContent = otherName;
+    $('answer-box').classList.add('hidden');
+    $('scoring-prompt').classList.add('hidden');
+    $('scoring-buttons').classList.add('hidden');
+    $('reveal-btn').classList.remove('hidden');
+    // Replace the wrong handler temporarily: a wrong steal just costs them the value
+    // (which the existing wrong-btn handler already does) — but doesn't trigger another steal
+    state.stealInProgress = true;
+  } else {
+    finishTile();
+  }
+});
+
+// Modify finishTile to handle the steal case
+function finishTile() {
+  const id = `${state.round}-${state.currentTile.catKey}-${state.currentTile.value}`;
+  state.usedTiles.add(id);
+  state.stealInProgress = false;
+  updateScores();
+
+  // Check if all tiles for this round are used
+  const tierValues = state.round === 1 ? [100, 200, 300, 400, 500] : [200, 400, 600, 800, 1000];
+  const totalTiles = 4 * tierValues.length;
+  const usedThisRound = [...state.usedTiles].filter(t => t.startsWith(`${state.round}-`)).length;
+
+  if (usedThisRound >= totalTiles) {
+    if (state.round === 1) {
+      state.round = 2;
+      // Whoever has fewer points picks first next round (Jeopardy-style)
+      state.currentPicker = state.player1.score <= state.player2.score ? 1 : 2;
+      alert(`Round 1 complete!\n\n${state.player1.name}: ${formatMoney(state.player1.score)}\n${state.player2.name}: ${formatMoney(state.player2.score)}\n\nOn to Round 2 — values are doubled!`);
+      buildBoard();
+      showScreen('board');
+    } else {
+      // Move to final
+      startFinal();
+    }
+  } else {
+    buildBoard();
+    showScreen('board');
+  }
+}
+
+$('skip-reveal-btn').addEventListener('click', () => {
+  $('skip-reveal-btn').classList.add('hidden');
+  $('skip-answer-box').classList.remove('hidden');
+  $('skip-continue-btn').classList.remove('hidden');
+});
+
+$('skip-continue-btn').addEventListener('click', () => {
+  // No score change, picker stays the same
+  finishTile();
+});
+
+// ============================================================
+//   FINAL ROUND
+// ============================================================
+function startFinal() {
+  state.round = 3;
+  updateScores();
+  $('final-cat-display').textContent = QUESTIONS.final.category;
+  $('final-cat-display-2').textContent = QUESTIONS.final.category;
+  $('final-q-text').textContent = QUESTIONS.final.q;
+  $('final-q-answer').textContent = QUESTIONS.final.a;
+  $('wager-p1-label').textContent = `${state.player1.name}'s Wager`;
+  $('wager-p2-label').textContent = `${state.player2.name}'s Wager`;
+  $('final-p1-name').textContent = state.player1.name;
+  $('final-p1-name-2').textContent = state.player1.name;
+  $('final-p2-name').textContent = state.player2.name;
+  $('final-p2-name-2').textContent = state.player2.name;
+  const p1Max = Math.max(0, state.player1.score);
+  const p2Max = Math.max(0, state.player2.score);
+  $('wager-p1-max').textContent = p1Max;
+  $('wager-p2-max').textContent = p2Max;
+  $('wager-p1').max = p1Max;
+  $('wager-p2').max = p2Max;
+  $('wager-p1').value = 0;
+  $('wager-p2').value = 0;
+  $('final-wager-stage').classList.remove('hidden');
+  $('final-question-stage').classList.add('hidden');
+  $('final-answer-box').classList.add('hidden');
+  $('final-reveal-btn').classList.remove('hidden');
+  $('final-scoring').classList.add('hidden');
+  $('final-done-btn').classList.add('hidden');
+  state.finalResults = { p1: null, p2: null };
+  showScreen('final');
+}
+
+$('lock-wagers-btn').addEventListener('click', () => {
+  const p1Max = Math.max(0, state.player1.score);
+  const p2Max = Math.max(0, state.player2.score);
+  let w1 = parseInt($('wager-p1').value) || 0;
+  let w2 = parseInt($('wager-p2').value) || 0;
+  if (w1 < 0 || w1 > p1Max) { alert(`${state.player1.name}'s wager must be between $0 and $${p1Max}`); return; }
+  if (w2 < 0 || w2 > p2Max) { alert(`${state.player2.name}'s wager must be between $0 and $${p2Max}`); return; }
+  state.finalWagers.p1 = w1;
+  state.finalWagers.p2 = w2;
+  $('final-wager-stage').classList.add('hidden');
+  $('final-question-stage').classList.remove('hidden');
+});
+
+$('final-reveal-btn').addEventListener('click', () => {
+  $('final-reveal-btn').classList.add('hidden');
+  $('final-answer-box').classList.remove('hidden');
+  $('final-scoring').classList.remove('hidden');
+});
+
+$('final-p1-correct').addEventListener('click', () => { state.finalResults.p1 = true; checkFinalDone(); });
+$('final-p1-wrong').addEventListener('click', () => { state.finalResults.p1 = false; checkFinalDone(); });
+$('final-p2-correct').addEventListener('click', () => { state.finalResults.p2 = true; checkFinalDone(); });
+$('final-p2-wrong').addEventListener('click', () => { state.finalResults.p2 = false; checkFinalDone(); });
+
+function checkFinalDone() {
+  // Highlight choices
+  $('final-p1-correct').style.opacity = state.finalResults.p1 === true ? '1' : '0.5';
+  $('final-p1-wrong').style.opacity = state.finalResults.p1 === false ? '1' : '0.5';
+  $('final-p2-correct').style.opacity = state.finalResults.p2 === true ? '1' : '0.5';
+  $('final-p2-wrong').style.opacity = state.finalResults.p2 === false ? '1' : '0.5';
+  if (state.finalResults.p1 !== null && state.finalResults.p2 !== null) {
+    $('final-done-btn').classList.remove('hidden');
+  }
+}
+
+$('final-done-btn').addEventListener('click', () => {
+  if (state.finalResults.p1) state.player1.score += state.finalWagers.p1;
+  else state.player1.score -= state.finalWagers.p1;
+  if (state.finalResults.p2) state.player2.score += state.finalWagers.p2;
+  else state.player2.score -= state.finalWagers.p2;
+  updateScores();
+  showEndScreen();
+});
+
+// ============================================================
+//   END SCREEN
+// ============================================================
+function showEndScreen() {
+  const p1 = state.player1, p2 = state.player2;
+  $('end-p1-name').textContent = p1.name;
+  $('end-p2-name').textContent = p2.name;
+  $('end-p1-score').textContent = formatMoney(p1.score);
+  $('end-p2-score').textContent = formatMoney(p2.score);
+  $('end-p1-card').classList.remove('winner');
+  $('end-p2-card').classList.remove('winner');
+  if (p1.score > p2.score) {
+    $('winner-banner').innerHTML = `🏆 ${p1.name} WINS! 🏆`;
+    $('end-p1-card').classList.add('winner');
+  } else if (p2.score > p1.score) {
+    $('winner-banner').innerHTML = `🏆 ${p2.name} WINS! 🏆`;
+    $('end-p2-card').classList.add('winner');
+  } else {
+    $('winner-banner').innerHTML = `🤝 IT'S A TIE! 🤝`;
+    $('end-p1-card').classList.add('winner');
+    $('end-p2-card').classList.add('winner');
+  }
+  showScreen('end');
+}
+
+$('play-again-btn').addEventListener('click', () => location.reload());
+
+// ============================================================
+//   INIT
+// ============================================================
+showScreen('welcome');
+</script>
+</body>
+</html>
